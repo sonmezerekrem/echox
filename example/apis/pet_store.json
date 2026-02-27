@@ -1,0 +1,347 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Pet Store API",
+    "description": "A sample API for managing a pet store",
+    "version": "1.0.0"
+  },
+  "servers": [
+    { "url": "https://api.petstore.example.com/v1" }
+  ],
+  "paths": {
+    "/pets": {
+      "get": {
+        "tags": ["Pets"],
+        "operationId": "listPets",
+        "summary": "List all pets",
+        "description": "Returns a paginated list of all pets in the store. Use query parameters to filter and paginate results.",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of pets to return (1-100)",
+            "schema": { "type": "integer", "default": 20 }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "description": "Number of pets to skip for pagination",
+            "schema": { "type": "integer", "default": 0 }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "description": "Filter by pet status",
+            "schema": { "type": "string", "enum": ["available", "adopted", "pending"] }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of pets",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Pet" }
+                    },
+                    "total": { "type": "integer", "example": 42 },
+                    "limit": { "type": "integer", "example": 20 },
+                    "offset": { "type": "integer", "example": 0 }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Pets"],
+        "operationId": "createPet",
+        "summary": "Create a pet",
+        "description": "Add a new pet to the store inventory.",
+        "requestBody": {
+          "required": true,
+          "description": "Pet object to be added to the store",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PetInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pet created successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Pet" }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data"
+          }
+        }
+      }
+    },
+    "/pets/{petId}": {
+      "get": {
+        "tags": ["Pets"],
+        "operationId": "getPet",
+        "summary": "Get a pet by ID",
+        "description": "Returns detailed information about a specific pet.",
+        "parameters": [
+          {
+            "name": "petId",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the pet",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pet details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Pet" }
+              }
+            }
+          },
+          "404": {
+            "description": "Pet not found"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Pets"],
+        "operationId": "updatePet",
+        "summary": "Update a pet",
+        "description": "Update the details of an existing pet.",
+        "parameters": [
+          {
+            "name": "petId",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the pet",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PetInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Pet updated successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Pet" }
+              }
+            }
+          },
+          "404": {
+            "description": "Pet not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Pets"],
+        "operationId": "deletePet",
+        "summary": "Delete a pet",
+        "description": "Permanently remove a pet from the store.",
+        "parameters": [
+          {
+            "name": "petId",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the pet",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Pet deleted successfully"
+          },
+          "404": {
+            "description": "Pet not found"
+          }
+        }
+      }
+    },
+    "/store/inventory": {
+      "get": {
+        "tags": ["Store"],
+        "operationId": "getInventory",
+        "summary": "Get store inventory",
+        "description": "Returns a summary of pets grouped by status.",
+        "responses": {
+          "200": {
+            "description": "Inventory counts by status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "available": { "type": "integer", "example": 25 },
+                    "pending": { "type": "integer", "example": 8 },
+                    "adopted": { "type": "integer", "example": 134 }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/store/orders": {
+      "post": {
+        "tags": ["Store"],
+        "operationId": "placeOrder",
+        "summary": "Place an adoption order",
+        "description": "Create a new adoption order for a pet.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "petId": { "type": "string", "example": "pet_abc123" },
+                  "adopter": { "type": "string", "example": "Jane Doe" },
+                  "notes": { "type": "string", "example": "First-time adopter" }
+                },
+                "required": ["petId", "adopter"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Order placed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string", "example": "ord_xyz789" },
+                    "petId": { "type": "string", "example": "pet_abc123" },
+                    "adopter": { "type": "string", "example": "Jane Doe" },
+                    "status": { "type": "string", "example": "pending" },
+                    "created_at": { "type": "string", "example": "2025-06-15T10:30:00Z" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid order data"
+          },
+          "409": {
+            "description": "Pet is not available for adoption"
+          }
+        }
+      }
+    },
+    "/store/orders/{orderId}": {
+      "get": {
+        "tags": ["Store"],
+        "operationId": "getOrder",
+        "summary": "Get order details",
+        "description": "Retrieve the details of a specific adoption order.",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the order",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string", "example": "ord_xyz789" },
+                    "petId": { "type": "string", "example": "pet_abc123" },
+                    "adopter": { "type": "string", "example": "Jane Doe" },
+                    "status": { "type": "string", "example": "completed" },
+                    "created_at": { "type": "string", "example": "2025-06-15T10:30:00Z" }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Store"],
+        "operationId": "cancelOrder",
+        "summary": "Cancel an order",
+        "description": "Cancel a pending adoption order. Only orders in 'pending' status can be cancelled.",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the order",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Order cancelled successfully"
+          },
+          "404": {
+            "description": "Order not found"
+          },
+          "409": {
+            "description": "Order cannot be cancelled (already completed)"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Pet": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "example": "pet_abc123" },
+          "name": { "type": "string", "example": "Buddy" },
+          "species": { "type": "string", "example": "dog" },
+          "breed": { "type": "string", "example": "Golden Retriever" },
+          "age": { "type": "integer", "example": 3 },
+          "status": { "type": "string", "example": "available" },
+          "created_at": { "type": "string", "example": "2025-01-10T08:00:00Z" }
+        }
+      },
+      "PetInput": {
+        "type": "object",
+        "required": ["name", "species"],
+        "properties": {
+          "name": { "type": "string", "example": "Buddy" },
+          "species": { "type": "string", "example": "dog" },
+          "breed": { "type": "string", "example": "Golden Retriever" },
+          "age": { "type": "integer", "example": 3 }
+        }
+      }
+    }
+  }
+}

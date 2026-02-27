@@ -1,0 +1,39 @@
+---
+import type { NavPage } from '../utils/navigation';
+
+interface Props {
+  prev: NavPage | null;
+  next: NavPage | null;
+}
+
+const { prev, next } = Astro.props;
+---
+
+{(prev || next) && (
+  <nav class="prev-next" aria-label="Page navigation">
+    {prev ? (
+      <a href={prev.href} class="prev-next-link prev-next-prev">
+        <span class="prev-next-direction">
+          <i class="hgi-stroke hgi-arrow-left-01"></i>
+          Previous
+        </span>
+        <span class="prev-next-title">
+          {prev.name}
+          {prev.status && <span class={`status-badge status-badge-sm status-${prev.status}`}>{prev.status}</span>}
+        </span>
+      </a>
+    ) : <div />}
+    {next ? (
+      <a href={next.href} class="prev-next-link prev-next-next">
+        <span class="prev-next-direction">
+          Next
+          <i class="hgi-stroke hgi-arrow-right-01"></i>
+        </span>
+        <span class="prev-next-title">
+          {next.name}
+          {next.status && <span class={`status-badge status-badge-sm status-${next.status}`}>{next.status}</span>}
+        </span>
+      </a>
+    ) : <div />}
+  </nav>
+)}

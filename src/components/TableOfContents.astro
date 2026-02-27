@@ -1,0 +1,91 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  headings: MarkdownHeading[];
+}
+
+const { headings } = Astro.props;
+const filteredHeadings = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
+---
+
+{filteredHeadings.length > 0 && (
+  <nav class="toc">
+    <div class="toc-indicator" id="toc-indicator"></div>
+    <ul class="toc-list">
+      {filteredHeadings.map((heading) => (
+        <li class:list={[`toc-depth-${heading.depth}`]}>
+          <a href={`#${heading.slug}`} class="toc-link" data-toc-slug={heading.slug}>
+            {heading.text}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+)}
+
+<script is:inline>
+  (function() {
+    var tocLinks = document.querySelectorAll('.toc-link[data-toc-slug]');
+    var indicator = document.getElementById('toc-indicator');
+    if (!tocLinks.length || !indicator) return;
+
+    var slugToLink = {};
+    tocLinks.forEach(function(link) {
+      slugToLink[link.getAttribute('data-toc-slug')] = link;
+    });
+
+    var activeSlug = null;
+
+    function setActive(slug) {
+      if (slug === activeSlug) return;
+      activeSlug = slug;
+
+      tocLinks.forEach(function(link) {
+        link.classList.remove('active');
+      });
+
+      var activeLink = slugToLink[slug];
+      if (!activeLink) {
+        indicator.style.opacity = '0';
+        return;
+      }
+
+      activeLink.classList.add('active');
+
+      var li = activeLink.parentElement;
+      var navRect = activeLink.closest('.toc').getBoundingClientRect();
+      var liRect = li.getBoundingClientRect();
+
+      indicator.style.opacity = '1';
+      indicator.style.top = (liRect.top - navRect.top) + 'px';
+      indicator.style.height = liRect.height + 'px';
+    }
+
+    var headingEls = [];
+    tocLinks.forEach(function(link) {
+      var slug = link.getAttribute('data-toc-slug');
+      var el = document.getElementById(slug);
+      if (el) headingEls.push({ slug: slug, el: el });
+    });
+
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          setActive(entry.target.id);
+        }
+      });
+    }, {
+      rootMargin: '0px 0px -70% 0px',
+      threshold: 0
+    });
+
+    headingEls.forEach(function(item) {
+      observer.observe(item.el);
+    });
+
+    if (headingEls.length > 0) {
+      setActive(headingEls[0].slug);
+    }
+  })();
+</script>

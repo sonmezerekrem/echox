@@ -1,0 +1,65 @@
+# EchoDocs - Build & Deploy Documentation
+#
+# Copy this workflow into your docs repository at .github/workflows/build-docs.yml.
+# It builds the documentation site on every push/PR and optionally deploys to GitHub Pages.
+#
+# Prerequisites:
+#   1. Your repo has content/, config.json, and optionally assets/ and apis/
+#   2. In repo Settings > Pages, set Source to "GitHub Actions"
+
+name: Build Documentation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install echodocs
+        run: npm install -g echodocs
+
+      - name: Build documentation
+        run: echodocs build
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-site
+          path: dist/
+
+      - name: Upload Pages artifact
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/
+
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

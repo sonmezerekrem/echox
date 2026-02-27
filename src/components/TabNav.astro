@@ -1,0 +1,25 @@
+---
+import type { NavTab } from '../utils/navigation';
+
+interface Props {
+  tabs: NavTab[];
+  activeTab: string;
+}
+
+const { tabs, activeTab } = Astro.props;
+---
+
+<nav class="tab-bar">
+  <div class="tab-bar-inner">
+    {tabs.map((tab) => {
+      const firstPage = tab.groups[0]?.pages[0];
+      const href = firstPage?.href ?? '#';
+      const isActive = tab.slug === activeTab;
+      return (
+        <a href={href} class:list={['tab-item', { active: isActive }]}>
+          {tab.name}
+        </a>
+      );
+    })}
+  </div>
+</nav>

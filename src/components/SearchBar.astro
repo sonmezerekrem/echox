@@ -1,0 +1,205 @@
+---
+---
+
+<button class="search-bar" type="button" aria-label="Search documentation" id="search-trigger">
+  <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="11" cy="11" r="8" />
+    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+  </svg>
+  <span class="search-text">Search</span>
+  <kbd class="search-kbd">
+    <span class="search-kbd-key">&#8984;</span>
+    <span class="search-kbd-key">K</span>
+  </kbd>
+</button>
+
+<div class="search-modal-overlay" id="search-overlay" hidden>
+  <div class="search-modal" role="dialog" aria-label="Search documentation">
+    <div class="search-modal-header">
+      <svg class="search-modal-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8" />
+        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+      </svg>
+      <input
+        type="text"
+        class="search-modal-input"
+        id="search-input"
+        placeholder="Search documentation..."
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <kbd class="search-modal-esc">Esc</kbd>
+    </div>
+    <div class="search-modal-results" id="search-results">
+      <div class="search-modal-empty" id="search-empty">
+        Type to start searching
+      </div>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    var pagefind = null;
+    var pagefindFailed = false;
+    var debounceTimer = null;
+    var selectedIndex = -1;
+
+    var trigger = document.getElementById('search-trigger');
+    var overlay = document.getElementById('search-overlay');
+    var input = document.getElementById('search-input');
+    var resultsContainer = document.getElementById('search-results');
+    var emptyState = document.getElementById('search-empty');
+
+    function loadPagefind() {
+      if (pagefind || pagefindFailed) return;
+      import('/pagefind/pagefind.js').then(function (pf) {
+        pagefind = pf;
+        if (pagefind.init) pagefind.init();
+      }).catch(function () {
+        pagefindFailed = true;
+        emptyState.textContent = 'Search is available after building the site';
+        console.warn('Pagefind index not found. Run "echodocs build" to generate the search index.');
+      });
+    }
+
+    function openModal() {
+      overlay.hidden = false;
+      document.body.style.overflow = 'hidden';
+      input.value = '';
+      resultsContainer.innerHTML = '';
+      emptyState.textContent = 'Type to start searching';
+      emptyState.style.display = '';
+      resultsContainer.appendChild(emptyState);
+      selectedIndex = -1;
+      requestAnimationFrame(function () { input.focus(); });
+      loadPagefind();
+    }
+
+    function closeModal() {
+      overlay.hidden = true;
+      document.body.style.overflow = '';
+      selectedIndex = -1;
+    }
+
+    function updateSelection() {
+      var items = resultsContainer.querySelectorAll('.search-result-item');
+      for (var i = 0; i < items.length; i++) {
+        if (i === selectedIndex) {
+          items[i].classList.add('selected');
+        } else {
+          items[i].classList.remove('selected');
+        }
+      }
+      var selected = items[selectedIndex];
+      if (selected) {
+        selected.scrollIntoView({ block: 'nearest' });
+      }
+    }
+
+    function performSearch(query) {
+      if (pagefindFailed) {
+        resultsContainer.innerHTML = '';
+        emptyState.textContent = 'Search is available after building the site';
+        emptyState.style.display = '';
+        resultsContainer.appendChild(emptyState);
+        return;
+      }
+      if (!pagefind || !query.trim()) {
+        resultsContainer.innerHTML = '';
+        emptyState.textContent = query.trim() ? 'Loading search index...' : 'Type to start searching';
+        emptyState.style.display = '';
+        resultsContainer.appendChild(emptyState);
+        return;
+      }
+
+      pagefind.search(query).then(function (search) {
+        var sliced = search.results.slice(0, 12);
+        return Promise.all(sliced.map(function (r) { return r.data(); }));
+      }).then(function (results) {
+        resultsContainer.innerHTML = '';
+        selectedIndex = -1;
+
+        if (results.length === 0) {
+          emptyState.textContent = 'No results for "' + query + '"';
+          emptyState.style.display = '';
+          resultsContainer.appendChild(emptyState);
+          return;
+        }
+
+        for (var i = 0; i < results.length; i++) {
+          var result = results[i];
+          var item = document.createElement('a');
+          item.href = result.url;
+          item.className = 'search-result-item';
+
+          var title = document.createElement('div');
+          title.className = 'search-result-title';
+          title.textContent = result.meta && result.meta.title ? result.meta.title : result.url;
+
+          var excerpt = document.createElement('div');
+          excerpt.className = 'search-result-excerpt';
+          excerpt.innerHTML = result.excerpt || '';
+
+          item.appendChild(title);
+          item.appendChild(excerpt);
+
+          item.addEventListener('click', function () { closeModal(); });
+
+          resultsContainer.appendChild(item);
+        }
+      });
+    }
+
+    trigger.addEventListener('click', openModal);
+
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) closeModal();
+    });
+
+    input.addEventListener('input', function () {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(function () {
+        performSearch(input.value);
+      }, 150);
+    });
+
+    input.addEventListener('keydown', function (e) {
+      var items = resultsContainer.querySelectorAll('.search-result-item');
+      var count = items.length;
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        selectedIndex = count > 0 ? (selectedIndex + 1) % count : -1;
+        updateSelection();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        selectedIndex = count > 0 ? (selectedIndex - 1 + count) % count : -1;
+        updateSelection();
+      } else if (e.key === 'Enter' && selectedIndex >= 0) {
+        e.preventDefault();
+        var selected = items[selectedIndex];
+        if (selected) {
+          closeModal();
+          window.location.href = selected.href;
+        }
+      } else if (e.key === 'Escape') {
+        closeModal();
+      }
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        if (overlay.hidden) {
+          openModal();
+        } else {
+          closeModal();
+        }
+      }
+      if (e.key === 'Escape' && !overlay.hidden) {
+        closeModal();
+      }
+    });
+  })();
+</script>

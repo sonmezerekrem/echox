@@ -1,0 +1,23 @@
+---
+import { getCollection } from 'astro:content';
+import { buildFullNavTree, getFirstPage } from '../utils/navigation';
+
+const entries = await getCollection('docs');
+const navTree = buildFullNavTree(entries);
+const firstPage = getFirstPage(navTree);
+
+if (firstPage) {
+  return Astro.redirect(firstPage);
+}
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>No content</title>
+  </head>
+  <body>
+    <p>No documentation pages found. Add markdown files to the <code>content/</code> directory.</p>
+  </body>
+</html>

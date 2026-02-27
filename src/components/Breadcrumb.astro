@@ -1,0 +1,14 @@
+---
+interface Props {
+  groupName: string;
+  pageName: string;
+}
+
+const { groupName, pageName } = Astro.props;
+---
+
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <span class="breadcrumb-item">{groupName}</span>
+  <span class="breadcrumb-sep">/</span>
+  <span class="breadcrumb-item current">{pageName}</span>
+</nav>

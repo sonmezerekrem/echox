@@ -1,0 +1,20 @@
+{
+  "name": "echodocs",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Static documentation site builder powered by Astro",
+  "bin": {
+    "echodocs": "./bin/echodocs.mjs"
+  },
+  "scripts": {
+    "dev": "ECHODOCS_DIR=./example astro dev",
+    "build": "ECHODOCS_DIR=./example astro build && pagefind --site ./example/dist",
+    "preview": "ECHODOCS_DIR=./example astro preview"
+  },
+  "dependencies": {
+    "@shikijs/transformers": "^3.23.0",
+    "astro": "^5.0.0",
+    "pagefind": "^1.4.0",
+    "remark-directive": "^4.0.0"
+  }
+}

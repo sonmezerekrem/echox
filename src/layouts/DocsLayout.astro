@@ -1,0 +1,250 @@
+---
+import type { MarkdownHeading } from 'astro';
+import type { NavTree } from '../utils/navigation';
+import { getPrevNext } from '../utils/navigation';
+import { loadConfig } from '../utils/config';
+import { getColorVars } from '../utils/colors';
+import TabNav from '../components/TabNav.astro';
+import Sidebar from '../components/Sidebar.astro';
+import TableOfContents from '../components/TableOfContents.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import SearchBar from '../components/SearchBar.astro';
+import HeaderActions from '../components/HeaderActions.astro';
+import Footer from '../components/Footer.astro';
+import PrevNextNav from '../components/PrevNextNav.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  navTree: NavTree;
+  activeTab: string;
+  currentSlug: string;
+  headings: MarkdownHeading[];
+  status?: string;
+}
+
+const { title, navTree, activeTab, currentSlug, headings, status } = Astro.props;
+const config = loadConfig();
+
+const currentTab = navTree.tabs.find((t) => t.slug === activeTab);
+const groups = currentTab?.groups ?? [];
+
+const currentGroup = groups.find((g) =>
+  g.pages.some((p) => p.slug === currentSlug)
+);
+const groupName = currentGroup?.name ?? '';
+const colorCss = getColorVars(config.color);
+const { prev, next } = getPrevNext(navTree, currentSlug);
+---
+
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fustat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css" />
+    <style set:html={colorCss}></style>
+    {config.favicon && <link rel="icon" href={config.favicon} />}
+    <title>{title} - {config.name}</title>
+    <meta name="description" content={config.description ?? ''} />
+    <script is:inline>
+      (function() {
+        var theme = localStorage.getItem('echodocs-theme');
+        if (!theme) {
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
+  </head>
+  <body>
+    <div class="progress-bar" id="progress-bar"></div>
+    <div class="page">
+      <header class="header">
+        <div class="container">
+          <div class="header-top">
+            <a href="/" class="site-title">
+              {config.logo && <img src={config.logo} alt="" class="site-logo" />}
+              {config.name}
+            </a>
+            <SearchBar />
+            <HeaderActions links={config.links} github={config.github} />
+            <button class="mobile-menu-toggle" aria-label="Toggle menu">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </button>
+          </div>
+          <TabNav tabs={navTree.tabs} activeTab={activeTab} />
+        </div>
+      </header>
+
+      <div class="container">
+        <div class="layout">
+          <Sidebar groups={groups} currentSlug={currentSlug} />
+
+          <main class="content">
+            <article class="article" data-pagefind-body>
+              <Breadcrumb groupName={groupName} pageName={title} />
+              <h1 class="page-title">
+                {title}
+                {status && <span class={`status-badge status-${status}`}>{status}</span>}
+              </h1>
+              <slot />
+            </article>
+            <PrevNextNav prev={prev} next={next} />
+          </main>
+
+          <div class="toc-wrapper">
+            <TableOfContents headings={headings} />
+          </div>
+        </div>
+      </div>
+
+      <Footer footer={config.footer} siteName={config.name} />
+    </div>
+
+    <script>
+      const toggle = document.querySelector('.mobile-menu-toggle');
+      const sidebar = document.querySelector('.sidebar');
+      if (toggle && sidebar) {
+        toggle.addEventListener('click', () => {
+          sidebar.classList.toggle('open');
+        });
+      }
+
+      const themeToggle = document.querySelector('.theme-toggle');
+      if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+          const current = document.documentElement.getAttribute('data-theme');
+          const next = current === 'dark' ? 'light' : 'dark';
+          document.documentElement.setAttribute('data-theme', next);
+          localStorage.setItem('echodocs-theme', next);
+        });
+      }
+    </script>
+
+    <script is:inline>
+      (function() {
+        var bar = document.getElementById('progress-bar');
+        var timer = null;
+
+        function startProgress() {
+          bar.style.transition = 'none';
+          bar.style.width = '0%';
+          bar.style.opacity = '1';
+          bar.offsetWidth; // force reflow
+          bar.style.transition = 'width 600ms cubic-bezier(0.4, 0, 0.2, 1)';
+          bar.style.width = '85%';
+        }
+
+        function completeProgress() {
+          bar.style.transition = 'width 200ms ease-out';
+          bar.style.width = '100%';
+          setTimeout(function() {
+            bar.style.transition = 'opacity 300ms ease';
+            bar.style.opacity = '0';
+          }, 200);
+        }
+
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a');
+          if (!link) return;
+          var href = link.getAttribute('href');
+          if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('//')) return;
+          if (link.target === '_blank') return;
+          if (e.ctrlKey || e.metaKey || e.shiftKey) return;
+          startProgress();
+        });
+
+        if (performance.navigation && performance.navigation.type === 1) {
+          // Page reload — no animation needed
+        } else if (document.readyState === 'complete') {
+          completeProgress();
+        } else {
+          window.addEventListener('load', completeProgress);
+        }
+
+        window.addEventListener('pageshow', function(e) {
+          if (e.persisted) completeProgress();
+        });
+      })();
+    </script>
+
+    <script is:inline>
+      (function() {
+        document.querySelectorAll('.article pre').forEach(function(pre) {
+          if (pre.querySelector('.mermaid') || pre.getAttribute('data-language') === 'mermaid') return;
+          pre.style.position = 'relative';
+          var btn = document.createElement('button');
+          btn.className = 'code-copy-btn';
+          btn.setAttribute('aria-label', 'Copy code');
+          btn.innerHTML = '<i class="hgi-stroke hgi-copy-01"></i>';
+          btn.addEventListener('click', function() {
+            var code = pre.querySelector('code');
+            var text = code ? code.textContent : pre.textContent;
+            navigator.clipboard.writeText(text).then(function() {
+              btn.innerHTML = '<i class="hgi-stroke hgi-tick-01"></i>';
+              btn.classList.add('copied');
+              setTimeout(function() {
+                btn.innerHTML = '<i class="hgi-stroke hgi-copy-01"></i>';
+                btn.classList.remove('copied');
+              }, 1500);
+            });
+          });
+          pre.appendChild(btn);
+        });
+      })();
+    </script>
+
+    <script is:inline type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+
+      function getMermaidTheme() {
+        return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default';
+      }
+
+      // Save original sources before first render
+      document.querySelectorAll('pre[data-language="mermaid"], pre > code.language-mermaid').forEach(function(el) {
+        var pre = el.tagName === 'PRE' ? el : el.parentElement;
+        var source = pre.textContent;
+        var wrapper = document.createElement('div');
+        wrapper.classList.add('mermaid');
+        wrapper.setAttribute('data-mermaid-source', source);
+        wrapper.textContent = source;
+        pre.replaceWith(wrapper);
+      });
+
+      async function renderMermaid() {
+        mermaid.initialize({ startOnLoad: false, theme: getMermaidTheme() });
+        await mermaid.run({ querySelector: '.mermaid' });
+      }
+
+      await renderMermaid();
+
+      // Re-render on theme toggle
+      var toggle = document.querySelector('.theme-toggle');
+      if (toggle) {
+        toggle.addEventListener('click', function() {
+          // Wait a tick for data-theme to update
+          setTimeout(async function() {
+            document.querySelectorAll('.mermaid').forEach(function(el) {
+              var source = el.getAttribute('data-mermaid-source');
+              if (source) {
+                el.removeAttribute('data-processed');
+                el.innerHTML = source;
+              }
+            });
+            mermaid.initialize({ startOnLoad: false, theme: getMermaidTheme() });
+            await mermaid.run({ querySelector: '.mermaid' });
+          }, 50);
+        });
+      }
+    </script>
+  </body>
+</html>

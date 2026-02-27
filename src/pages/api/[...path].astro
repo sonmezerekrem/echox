@@ -1,0 +1,35 @@
+---
+import { getCollection } from 'astro:content';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import EndpointView from '../../components/EndpointView.astro';
+import { buildFullNavTree, findCurrentTab } from '../../utils/navigation';
+import { loadOpenApiSpecs } from '../../utils/openapi';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('docs');
+  const navTree = buildFullNavTree(entries);
+  const { endpoints } = loadOpenApiSpecs();
+
+  return endpoints.map((endpoint) => {
+    const slugPath = endpoint.slug.replace(/^api\//, '');
+    const currentTab = findCurrentTab(navTree, endpoint.slug);
+    return {
+      params: { path: slugPath },
+      props: { endpoint, navTree, activeTab: currentTab?.slug ?? '' },
+    };
+  });
+}
+
+const { endpoint, navTree, activeTab } = Astro.props;
+const title = `${endpoint.method} ${endpoint.summary || endpoint.path}`;
+---
+
+<DocsLayout
+  title={title}
+  navTree={navTree}
+  activeTab={activeTab}
+  currentSlug={endpoint.slug}
+  headings={[]}
+>
+  <EndpointView endpoint={endpoint} />
+</DocsLayout>

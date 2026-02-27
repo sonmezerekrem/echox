@@ -1,0 +1,14 @@
+services:
+  build:
+    build: .
+    volumes:
+      - ./example:/docs
+    command: build
+
+  dev:
+    build: .
+    volumes:
+      - ./example:/docs
+    ports:
+      - "4321:4321"
+    command: ["dev", "--host", "0.0.0.0"]
