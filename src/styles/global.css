@@ -879,6 +879,10 @@ a.doc-card:hover {
   line-height: 1.4;
 }
 
+.article h3.task-name {
+  margin-top: 12px;
+}
+
 .task-meta {
   display: flex;
   flex-wrap: wrap;
@@ -1003,6 +1007,7 @@ a.doc-card:hover {
 .task-relations {
   font-size: 13px;
   padding-top: 12px;
+  margin-top: 12px;
   margin-bottom: 0;
   border-top: 1px solid var(--color-border);
 }
