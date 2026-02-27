@@ -27,3 +27,31 @@ tasks:
     relations:
       - label: API reference
         url: https://example.com/api
+  - id: ECX-4
+    name: Improve search relevance
+    description: Tune Pagefind configuration so core guides rank higher than changelog entries.
+    labels:
+      - search
+      - ux
+    status: in-progress
+    relations:
+      - resources/changelog/v1_0
+      - guides/core_concepts/routing
+  - id: ECX-5
+    name: Add dark theme screenshots
+    description: Capture and embed dark mode screenshots for the getting started guide.
+    labels:
+      - docs
+      - design
+    status: todo
+    relations:
+      - guides/getting_started/introduction
+  - id: ECX-6
+    name: Validate config at CLI
+    description: Ensure the CLI reports helpful errors when config.json is invalid.
+    labels:
+      - cli
+      - validation
+    status: done
+    relations:
+      - guides/core_concepts/configuration
