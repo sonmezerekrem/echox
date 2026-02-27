@@ -1,0 +1,24 @@
+---
+import type { Task } from '../utils/tasks';
+import TaskCard from './TaskCard.astro';
+
+interface Props {
+  tasks: Task[];
+}
+
+const { tasks } = Astro.props;
+---
+
+<div class="task-list">
+  {tasks.length === 0 ? (
+    <p class="task-list-empty">No tasks defined.</p>
+  ) : (
+    <ul class="task-list-grid">
+      {tasks.map((task) => (
+        <li>
+          <TaskCard task={task} />
+        </li>
+      ))}
+    </ul>
+  )}
+</div>

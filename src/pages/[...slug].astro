@@ -1,37 +1,79 @@
 ---
 import { getCollection, render } from 'astro:content';
 import DocsLayout from '../layouts/DocsLayout.astro';
+import TaskList from '../components/TaskList.astro';
 import { buildFullNavTree, findCurrentTab } from '../utils/navigation';
+import { getTabsWithTasks, loadTasksForTab } from '../utils/tasks';
 
 export async function getStaticPaths() {
   const entries = await getCollection('docs');
   const navTree = buildFullNavTree(entries);
 
-  return entries.map((entry) => {
+  const paths = entries.map((entry) => {
     const currentTab = findCurrentTab(navTree, entry.id);
     return {
       params: { slug: entry.id },
       props: { entry, navTree, activeTab: currentTab?.slug ?? '' },
     };
   });
+
+  for (const tab of getTabsWithTasks()) {
+    paths.push({
+      params: { slug: `${tab}/tasks` },
+      props: {
+        tasksPage: true,
+        tabSlug: tab,
+        navTree: buildFullNavTree(entries),
+        activeTab: tab,
+        tasks: loadTasksForTab(tab),
+        currentSlug: `${tab}/tasks`,
+      },
+    });
+  }
+
+  return paths;
 }
 
-const { entry, navTree, activeTab } = Astro.props;
-const { Content, headings } = await render(entry);
-const data = entry.data as { name?: string; status?: string };
-const title = data.name
-  ?? entry.id.split('/').pop()?.replace(/[-_]/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())
-  ?? 'Untitled';
-const status = data.status;
+const props = Astro.props;
+const { navTree, activeTab, tasksPage, tasks, currentSlug } = props;
+const entry = 'entry' in props ? props.entry : null;
+
+let DocContent: Awaited<ReturnType<typeof render>>['Content'] | null = null;
+let docTitle = '';
+let docStatus: string | undefined;
+let docHeadings: Awaited<ReturnType<typeof render>>['headings'] = [];
+if (entry) {
+  const rendered = await render(entry);
+  DocContent = rendered.Content;
+  docHeadings = rendered.headings;
+  const data = entry.data as { name?: string; status?: string };
+  docTitle = data.name
+    ?? entry.id.split('/').pop()?.replace(/[-_]/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())
+    ?? 'Untitled';
+  docStatus = data.status;
+}
+
 ---
 
-<DocsLayout
-  title={title}
-  navTree={navTree}
-  activeTab={activeTab}
-  currentSlug={entry.id}
-  headings={headings}
-  status={status}
->
-  <Content />
-</DocsLayout>
+{tasksPage ? (
+  <DocsLayout
+    title="Tasks"
+    navTree={navTree}
+    activeTab={activeTab}
+    currentSlug={currentSlug!}
+    headings={[]}
+  >
+    <TaskList tasks={tasks ?? []} />
+  </DocsLayout>
+) : DocContent && entry ? (
+  <DocsLayout
+    title={docTitle}
+    navTree={navTree}
+    activeTab={activeTab}
+    currentSlug={entry.id}
+    headings={docHeadings}
+    status={docStatus}
+  >
+    <DocContent />
+  </DocsLayout>
+) : null}

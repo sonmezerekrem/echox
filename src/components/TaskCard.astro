@@ -1,0 +1,50 @@
+---
+import type { Task } from '../utils/tasks';
+
+interface Props {
+  task: Task;
+}
+
+const { task } = Astro.props;
+const relationItems = (task.relations ?? []).map((r) =>
+  typeof r === 'string' ? { label: r, url: r.startsWith('http') ? r : `/${r}` } : r
+);
+const statusSlug = task.status.toLowerCase().replace(/\s+/g, '-');
+---
+
+<article class="task-card" id={`task-${task.id}`}>
+  <div class="task-card-header">
+    <span class="task-id">{task.id}</span>
+    <span class={`status-badge status-badge-sm status-${statusSlug}`}>{task.status}</span>
+  </div>
+  <h3 class="task-name">{task.name}</h3>
+  {task.description && (
+    <p class="task-description">{task.description}</p>
+  )}
+  {task.labels && task.labels.length > 0 && (
+    <div class="task-labels">
+      {task.labels.map((label) => (
+        <span class="task-label">{label}</span>
+      ))}
+    </div>
+  )}
+  {relationItems.length > 0 && (
+    <div class="task-relations">
+      <span class="task-relations-title">Related:</span>
+      <ul class="task-relations-list">
+        {relationItems.map((r) => (
+          <li>
+            <a
+              href={r.url}
+              class="task-relation-link"
+              target={r.url.startsWith('http') ? '_blank' : undefined}
+              rel={r.url.startsWith('http') ? 'noopener noreferrer' : undefined}
+            >
+              {r.label ?? r.url}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
+</article>

@@ -1,5 +1,6 @@
 import type { CollectionEntry } from 'astro:content';
 import { loadOpenApiSpecs } from './openapi';
+import { getTabsWithTasks } from './tasks';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -101,6 +102,25 @@ export function buildNavTree(entries: CollectionEntry<'docs'>[]): NavTree {
       icon: pageIcon,
       status: data.status,
     });
+  }
+
+  for (const tabSlug of getTabsWithTasks()) {
+    const tab = tabsMap.get(tabSlug);
+    if (!tab) continue;
+    const tasksPage: NavPage = {
+      slug: `${tabSlug}/tasks`,
+      name: 'Tasks',
+      href: `/${tabSlug}/tasks`,
+      order: Number.MAX_SAFE_INTEGER,
+      icon: 'task-01',
+    };
+    const tasksGroup: NavGroup = {
+      slug: 'tasks',
+      name: 'Tasks',
+      pages: [tasksPage],
+      order: Number.MAX_SAFE_INTEGER,
+    };
+    tab.groups.push(tasksGroup);
   }
 
   const tabs = Array.from(tabsMap.values());

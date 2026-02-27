@@ -1,0 +1,29 @@
+tasks:
+  - id: ECX-1
+    name: Set up local development
+    description: Configure the project and run the dev server with the example content.
+    labels:
+      - onboarding
+      - dev
+    status: done
+    relations:
+      - guides/getting_started/installation
+      - guides/getting_started/project_structure
+  - id: ECX-2
+    name: Add custom theme colors
+    description: Extend the theming system to support a custom primary color in config.json.
+    labels:
+      - theming
+    status: in-progress
+    relations:
+      - guides/core_concepts/theming
+      - ECX-1
+  - id: ECX-3
+    name: Document the Tasks feature
+    description: Add a short section in the docs explaining how to use tasks.yml per tab.
+    labels:
+      - docs
+    status: todo
+    relations:
+      - label: API reference
+        url: https://example.com/api
