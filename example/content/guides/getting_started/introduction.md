@@ -34,6 +34,9 @@ Extend the markdown pipeline with remark and rehype plugins.
 
 A minimal docs project looks like this:
 
+![Showcase 1](/image1.jpg)
+![Showcase 2](/image2.jpg)
+
 ```
 my-docs/
 ├── content/
