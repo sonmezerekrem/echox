@@ -17,6 +17,12 @@ export interface Task {
   labels?: string[];
   status: string;
   relations?: (string | TaskRelation)[];
+  type?: string;
+  steps?: string[];
+  acceptanceCriteria?: string[];
+  createdAt?: string;
+  updatedAt?: string;
+  dependencies?: string[];
 }
 
 function normalizeRelation(raw: unknown): TaskRelation | null {
@@ -49,10 +55,13 @@ function normalizeTask(raw: unknown): Task | null {
   if (!id || !name) return null;
 
   const status = typeof o.status === 'string' ? o.status : 'todo';
+  const type = typeof o.type === 'string' ? o.type : undefined;
+
   let labels: string[] = [];
   if (Array.isArray(o.labels)) {
     labels = o.labels.filter((l): l is string => typeof l === 'string');
   }
+
   let relations: (string | TaskRelation)[] = [];
   if (Array.isArray(o.relations)) {
     relations = o.relations
@@ -65,6 +74,29 @@ function normalizeTask(raw: unknown): Task | null {
       .filter((r): r is string | TaskRelation => r !== null);
   }
 
+  let steps: string[] | undefined;
+  if (Array.isArray(o.steps)) {
+    const s = o.steps.filter((v): v is string => typeof v === 'string' && v.trim().length > 0);
+    if (s.length) steps = s;
+  }
+
+  let acceptanceCriteria: string[] | undefined;
+  if (Array.isArray(o['acceptance_criteria']) || Array.isArray(o.acceptanceCriteria)) {
+    const src = (Array.isArray(o['acceptance_criteria']) ? o['acceptance_criteria'] : o.acceptanceCriteria) as unknown[];
+    const ac = src.filter((v): v is string => typeof v === 'string' && v.trim().length > 0);
+    if (ac.length) acceptanceCriteria = ac;
+  }
+
+  let dependencies: string[] | undefined;
+  if (Array.isArray(o.dependency) || Array.isArray(o.dependencies)) {
+    const src = (Array.isArray(o.dependencies) ? o.dependencies : o.dependency) as unknown[];
+    const dep = src.filter((v): v is string => typeof v === 'string' && v.trim().length > 0);
+    if (dep.length) dependencies = dep;
+  }
+
+  const createdAt = typeof o['created_at'] === 'string' ? o['created_at'] : typeof o.createdAt === 'string' ? o.createdAt : undefined;
+  const updatedAt = typeof o['updated_at'] === 'string' ? o['updated_at'] : typeof o.updatedAt === 'string' ? o.updatedAt : undefined;
+
   return {
     id,
     name,
@@ -72,6 +104,12 @@ function normalizeTask(raw: unknown): Task | null {
     labels: labels.length ? labels : undefined,
     status,
     relations: relations.length ? relations : undefined,
+     type,
+     steps,
+     acceptanceCriteria,
+     createdAt,
+     updatedAt,
+     dependencies,
   };
 }
 

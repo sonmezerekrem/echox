@@ -3,7 +3,7 @@
   "description": "Static documentation site builder powered by Astro",
   "logo": "/logo.svg",
   "favicon": "/favicon.svg",
-  "color": "purple",
+  "color": "lime",
   "github": "https://github.com/echox/echox",
   "links": [
     { "label": "Examples", "url": "https://example.com/examples", "external": true },

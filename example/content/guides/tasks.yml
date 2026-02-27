@@ -2,56 +2,110 @@ tasks:
   - id: ECX-1
     name: Set up local development
     description: Configure the project and run the dev server with the example content.
+    type: chore
     labels:
       - onboarding
       - dev
     status: done
+    steps:
+      - Install dependencies with npm install.
+      - Run npm run dev and verify the docs load.
+    acceptance_criteria:
+      - Dev server starts without errors.
+      - Example docs are reachable at the local URL.
+    created_at: 2025-12-01T10:00:00Z
+    updated_at: 2025-12-02T09:30:00Z
     relations:
       - guides/getting_started/installation
       - guides/getting_started/project_structure
   - id: ECX-2
     name: Add custom theme colors
     description: Extend the theming system to support a custom primary color in config.json.
+    type: feature
     labels:
       - theming
     status: in-progress
+    steps:
+      - Add a new color option to config validation.
+      - Wire the color into getColorVars.
+      - Add an example color to example/config.json.
+    acceptance_criteria:
+      - Changing color in config.json updates the site primary color.
+      - Build passes with no type or lint errors.
+    created_at: 2025-12-03T11:15:00Z
+    updated_at: 2025-12-04T08:45:00Z
+    dependency:
+      - ECX-1
     relations:
       - guides/core_concepts/theming
       - ECX-1
   - id: ECX-3
     name: Document the Tasks feature
     description: Add a short section in the docs explaining how to use tasks.yml per tab.
+    type: docs
     labels:
       - docs
     status: todo
+    steps:
+      - Create a new page under guides explaining tasks.yml.
+      - Add examples for todo, in-progress and done tasks.
+    acceptance_criteria:
+      - Tasks feature is documented in the example docs.
+    created_at: 2025-12-04T09:00:00Z
+    updated_at: 2025-12-04T09:00:00Z
     relations:
       - label: API reference
         url: https://example.com/api
   - id: ECX-4
     name: Improve search relevance
     description: Tune Pagefind configuration so core guides rank higher than changelog entries.
+    type: improvement
     labels:
       - search
       - ux
     status: in-progress
+    steps:
+      - Review current Pagefind configuration.
+      - Adjust weights for guides vs changelog content.
+      - Rebuild and manually test search results.
+    acceptance_criteria:
+      - Core guides appear before changelog entries for common queries.
+    created_at: 2025-12-05T10:30:00Z
+    updated_at: 2025-12-06T12:00:00Z
     relations:
       - resources/changelog/v1_0
       - guides/core_concepts/routing
   - id: ECX-5
     name: Add dark theme screenshots
     description: Capture and embed dark mode screenshots for the getting started guide.
+    type: docs
     labels:
       - docs
       - design
     status: todo
+    steps:
+      - Capture dark mode screenshots for key pages.
+      - Add screenshots to the getting started introduction.
+    acceptance_criteria:
+      - Dark mode screenshots appear in the getting started guide.
+    created_at: 2025-12-06T14:00:00Z
+    updated_at: 2025-12-06T14:00:00Z
     relations:
       - guides/getting_started/introduction
   - id: ECX-6
     name: Validate config at CLI
     description: Ensure the CLI reports helpful errors when config.json is invalid.
+    type: feature
     labels:
       - cli
       - validation
     status: done
+    steps:
+      - Add config validation to the CLI entrypoint.
+      - Provide clear error messages for common mistakes.
+    acceptance_criteria:
+      - Running echox with an invalid config shows a helpful error.
+    created_at: 2025-12-02T16:00:00Z
+    updated_at: 2025-12-03T10:20:00Z
     relations:
       - guides/core_concepts/configuration

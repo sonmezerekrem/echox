@@ -867,6 +867,35 @@ a.doc-card:hover {
   line-height: 1.4;
 }
 
+.task-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.task-type-pill {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+}
+
+.task-dates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.task-date-separator {
+  margin: 0 2px;
+}
+
 .task-description {
   font-size: 14px;
   color: var(--text-muted);
@@ -892,6 +921,71 @@ a.doc-card:hover {
   color: var(--text-secondary);
   border: 1px solid var(--color-border);
   text-transform: capitalize;
+}
+
+.task-section {
+  margin-top: 8px;
+}
+
+.task-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.task-steps {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.task-steps li + li {
+  margin-top: 2px;
+}
+
+.task-acceptance {
+  list-style: disc;
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.task-acceptance li + li {
+  margin-top: 2px;
+}
+
+.task-dependencies {
+  margin-top: 8px;
+}
+
+.task-dependencies-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.task-dependency-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  background: rgba(148, 163, 184, 0.12);
+  color: var(--text-secondary);
+  text-decoration: none;
+  border: 1px solid var(--color-border);
+}
+
+.task-dependency-pill:hover {
+  text-decoration: underline;
 }
 
 .task-relations {

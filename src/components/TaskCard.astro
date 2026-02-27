@@ -18,6 +18,16 @@ const relationItems = (task.relations ?? []).map((r) => {
   return { ...item, displayLabel };
 });
 const statusSlug = task.status.toLowerCase().replace(/\s+/g, '-');
+
+const typeLabel =
+  task.type &&
+  task.type
+    .split(/[_\s-]+/)
+    .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+    .join(' ');
+
+const createdShort = task.createdAt ? task.createdAt.slice(0, 10) : null;
+const updatedShort = task.updatedAt ? task.updatedAt.slice(0, 10) : null;
 ---
 
 <article class="task-card" id={`task-${task.id}`}>
@@ -26,6 +36,22 @@ const statusSlug = task.status.toLowerCase().replace(/\s+/g, '-');
     <span class={`status-badge status-badge-sm status-${statusSlug}`}>{task.status}</span>
   </div>
   <h3 class="task-name">{task.name}</h3>
+  {(typeLabel || createdShort || updatedShort) && (
+    <div class="task-meta">
+      {typeLabel && <span class="task-type-pill">{typeLabel}</span>}
+      {(createdShort || updatedShort) && (
+        <span class="task-dates">
+          {createdShort && <span>Created {createdShort}</span>}
+          {updatedShort && (
+            <>
+              {createdShort && <span class="task-date-separator">•</span>}
+              <span>Updated {updatedShort}</span>
+            </>
+          )}
+        </span>
+      )}
+    </div>
+  )}
   {task.description && (
     <p class="task-description">{task.description}</p>
   )}
@@ -34,6 +60,38 @@ const statusSlug = task.status.toLowerCase().replace(/\s+/g, '-');
       {task.labels.map((label) => (
         <span class="task-label">{label}</span>
       ))}
+    </div>
+  )}
+  {task.steps && task.steps.length > 0 && (
+    <div class="task-section">
+      <div class="task-section-title">Steps</div>
+      <ol class="task-steps">
+        {task.steps.map((step) => (
+          <li>{step}</li>
+        ))}
+      </ol>
+    </div>
+  )}
+  {task.acceptanceCriteria && task.acceptanceCriteria.length > 0 && (
+    <div class="task-section">
+      <div class="task-section-title">Acceptance criteria</div>
+      <ul class="task-acceptance">
+        {task.acceptanceCriteria.map((crit) => (
+          <li>{crit}</li>
+        ))}
+      </ul>
+    </div>
+  )}
+  {task.dependencies && task.dependencies.length > 0 && (
+    <div class="task-section task-dependencies">
+      <div class="task-section-title">Depends on</div>
+      <div class="task-dependencies-list">
+        {task.dependencies.map((dep) => (
+          <a href={`#task-${dep}`} class="task-dependency-pill">
+            {dep}
+          </a>
+        ))}
+      </div>
     </div>
   )}
   {relationItems.length > 0 && (
