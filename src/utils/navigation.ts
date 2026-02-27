@@ -3,7 +3,7 @@ import { loadOpenApiSpecs } from './openapi';
 import fs from 'node:fs';
 import path from 'node:path';
 
-const userDir = process.env.ECHODOCS_DIR || process.cwd();
+const userDir = process.env.ECHOX_DIR || process.cwd();
 
 export interface NavPage {
   slug: string;

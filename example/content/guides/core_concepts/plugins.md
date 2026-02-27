@@ -7,7 +7,7 @@ status: beta
 
 ## Plugin System
 
-EchoDocs supports remark and rehype plugins to extend the markdown processing pipeline. Drop plugin files into the `plugins/` directory and they are loaded automatically.
+Echox supports remark and rehype plugins to extend the markdown processing pipeline. Drop plugin files into the `plugins/` directory and they are loaded automatically.
 
 ## Adding a Plugin
 

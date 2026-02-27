@@ -42,7 +42,7 @@ When adding a footer to an existing config:
   "name": "My Project",
   "color": "blue",
   "footer": { // [!code ++]
-    "message": "Built with EchoDocs" // [!code ++]
+    "message": "Built with Echox" // [!code ++]
   } // [!code ++]
 }
 ```

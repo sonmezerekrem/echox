@@ -1,17 +1,17 @@
 {
-  "name": "EchoDocs",
+  "name": "Echox",
   "description": "Static documentation site builder powered by Astro",
   "logo": "/logo.svg",
   "favicon": "/favicon.svg",
   "color": "purple",
-  "github": "https://github.com/echodocs/echodocs",
+  "github": "https://github.com/echox/echox",
   "links": [
     { "label": "Examples", "url": "https://example.com/examples", "external": true },
     { "label": "Blog", "url": "https://example.com/blog", "external": true },
     { "label": "Get Started", "url": "/guides/getting_started/introduction", "type": "button" }
   ],
   "footer": {
-    "message": "Built with EchoDocs",
+    "message": "Built with Echox",
     "columns": [
       {
         "title": "Resources",
@@ -23,8 +23,8 @@
       {
         "title": "Community",
         "links": [
-          { "label": "GitHub", "url": "https://github.com/echodocs/echodocs", "external": true },
-          { "label": "Discord", "url": "https://discord.gg/echodocs", "external": true }
+          { "label": "GitHub", "url": "https://github.com/echox/echox", "external": true },
+          { "label": "Discord", "url": "https://discord.gg/echox", "external": true }
         ]
       },
       {

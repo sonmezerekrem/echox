@@ -1,21 +1,21 @@
 ---
-name: echodocs
-description: Build and manage documentation sites with EchoDocs. Use when creating docs projects, writing markdown content, configuring config.json, setting up folder structure, adding OpenAPI specs, or running echodocs CLI commands.
+name: echox
+description: Build and manage documentation sites with Echox. Use when creating docs projects, writing markdown content, configuring config.json, setting up folder structure, adding OpenAPI specs, or running echox CLI commands.
 ---
 
-# EchoDocs
+# Echox
 
-EchoDocs is a static documentation site builder powered by Astro. It turns markdown files into a themed, navigable documentation website with zero client-side JavaScript.
+Echox is a static documentation site builder powered by Astro. It turns markdown files into a themed, navigable documentation website with zero client-side JavaScript.
 
 ## CLI Commands
 
 ```bash
-echodocs init                  # Scaffold a new project (prompts for name)
-echodocs init --name "My Docs" # Scaffold with a specific name
-echodocs dev                   # Start dev server with hot reload
-echodocs build                 # Build static site to ./dist
-echodocs build --no-link-check # Build without broken link detection
-echodocs preview               # Preview the built site locally
+echox init                  # Scaffold a new project (prompts for name)
+echox init --name "My Docs" # Scaffold with a specific name
+echox dev                   # Start dev server with hot reload
+echox build                 # Build static site to ./dist
+echox build --no-link-check # Build without broken link detection
+echox preview               # Preview the built site locally
 ```
 
 Run commands from the directory containing `content/`, `assets/`, and `config.json`.
@@ -131,7 +131,7 @@ Full config with all optional fields:
     { "label": "Get Started", "url": "/guides/intro/welcome", "type": "button" }
   ],
   "footer": {
-    "message": "Built with EchoDocs",
+    "message": "Built with Echox",
     "columns": [
       {
         "title": "Resources",
@@ -186,7 +186,7 @@ Add `title="filename"` to the code fence to display a filename bar above the cod
 
 ````
 ```ts title="config.ts"
-export const name = "EchoDocs";
+export const name = "Echox";
 ```
 ````
 
@@ -262,7 +262,7 @@ Group cards into a responsive grid with `card-group`:
 ```markdown
 ::::card-group
 :::card{title="Installation" href="/guides/getting_started/installation" icon="download-04"}
-Install EchoDocs globally or use npx.
+Install Echox globally or use npx.
 :::
 :::card{title="Configuration" href="/guides/core_concepts/configuration" icon="settings-02"}
 Set up your config.json file.

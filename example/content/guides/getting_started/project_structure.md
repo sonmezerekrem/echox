@@ -6,7 +6,7 @@ icon: folder-02
 
 ## Directory Layout
 
-A EchoDocs project follows a simple convention:
+An Echox project follows a simple convention:
 
 ```
 my-docs/

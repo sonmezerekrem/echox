@@ -20,7 +20,7 @@ const colorCss = getColorVars(config.color);
     <title>Page not found - {config.name}</title>
     <script is:inline>
       (function() {
-        var theme = localStorage.getItem('echodocs-theme');
+        var theme = localStorage.getItem('echox-theme');
         if (!theme) {
           theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         }

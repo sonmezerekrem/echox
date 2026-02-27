@@ -6,7 +6,7 @@ import { buildFullNavTree } from '../utils/navigation';
 import { loadConfig } from '../utils/config';
 import { loadOpenApiSpecs, type ApiEndpoint } from '../utils/openapi';
 
-const userDir = process.env.ECHODOCS_DIR || process.cwd();
+const userDir = process.env.ECHOX_DIR || process.cwd();
 
 function readMarkdownSource(entryId: string): string {
   const filePath = path.join(userDir, 'content', entryId + '.md');

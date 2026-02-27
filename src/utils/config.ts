@@ -36,7 +36,7 @@ export interface SiteConfig {
   footer?: FooterConfig;
 }
 
-const userDir = process.env.ECHODOCS_DIR || process.cwd();
+const userDir = process.env.ECHOX_DIR || process.cwd();
 const isDev = process.env.NODE_ENV !== 'production';
 
 let cachedConfig: SiteConfig | null = null;

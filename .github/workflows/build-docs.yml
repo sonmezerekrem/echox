@@ -1,4 +1,4 @@
-# EchoDocs - Build & Deploy Documentation
+# Echox - Build & Deploy Documentation
 #
 # Copy this workflow into your docs repository at .github/workflows/build-docs.yml.
 # It builds the documentation site on every push/PR and optionally deploys to GitHub Pages.
@@ -34,11 +34,11 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install echodocs
-        run: npm install -g echodocs
+      - name: Install echox
+        run: npm install -g echox
 
       - name: Build documentation
-        run: echodocs build
+        run: echox build
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4

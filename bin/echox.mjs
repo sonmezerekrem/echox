@@ -14,10 +14,10 @@ const COMMANDS = ['dev', 'build', 'preview', 'init'];
 
 function printUsage() {
   console.log(`
-  echodocs - Static documentation site builder
+  echox - Static documentation site builder
 
   Usage:
-    echodocs <command> [options]
+    echox <command> [options]
 
   Commands:
     init      Scaffold a new docs project in the current directory
@@ -37,7 +37,7 @@ function printUsage() {
     config.json  Site configuration
 
   CI/CD:
-    Use "echodocs build" in your CI pipeline.
+    Use "echox build" in your CI pipeline.
     The build will fail if broken internal links are detected.
     See .github/workflows/build-docs.yml for a GitHub Actions example.
 `);
@@ -166,14 +166,14 @@ function validate() {
   if (!fs.existsSync(contentDir)) {
     console.error(`Error: No content/ directory found in ${userDir}`);
     console.error('Create a content/ directory with your markdown files.');
-    console.error('Run "echodocs init" to scaffold a new project.');
+    console.error('Run "echox init" to scaffold a new project.');
     process.exit(1);
   }
 
   if (!fs.existsSync(configFile)) {
     console.error(`Error: No config.json found in ${userDir}`);
     console.error('Create a config.json with at least: { "name": "My Docs" }');
-    console.error('Run "echodocs init" to scaffold a new project.');
+    console.error('Run "echox init" to scaffold a new project.');
     process.exit(1);
   }
 
@@ -261,8 +261,8 @@ Your documentation is organized in a three-level folder structure:
     assets/
 
   Next steps:
-    echodocs dev      Start the development server
-    echodocs build    Build for production
+    echox dev      Start the development server
+    echox build    Build for production
 `);
 }
 
@@ -350,7 +350,7 @@ if (command === 'init') {
     stdio: 'inherit',
     env: {
       ...process.env,
-      ECHODOCS_DIR: userDir,
+      ECHOX_DIR: userDir,
     },
   });
 

@@ -4,8 +4,8 @@ WORKDIR /tool
 COPY package*.json ./
 RUN npm ci --production
 COPY . .
-RUN chmod +x bin/echodocs.mjs
+RUN chmod +x bin/echox.mjs
 
 WORKDIR /docs
-ENTRYPOINT ["/tool/bin/echodocs.mjs"]
+ENTRYPOINT ["/tool/bin/echox.mjs"]
 CMD ["build"]

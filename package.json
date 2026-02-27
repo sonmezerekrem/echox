@@ -1,15 +1,15 @@
 {
-  "name": "echodocs",
+  "name": "echox",
   "version": "1.0.0",
   "type": "module",
   "description": "Static documentation site builder powered by Astro",
   "bin": {
-    "echodocs": "./bin/echodocs.mjs"
+    "echox": "./bin/echox.mjs"
   },
   "scripts": {
-    "dev": "ECHODOCS_DIR=./example astro dev",
-    "build": "ECHODOCS_DIR=./example astro build && pagefind --site ./example/dist",
-    "preview": "ECHODOCS_DIR=./example astro preview"
+    "dev": "ECHOX_DIR=./example astro dev",
+    "build": "ECHOX_DIR=./example astro build && pagefind --site ./example/dist",
+    "preview": "ECHOX_DIR=./example astro preview"
   },
   "dependencies": {
     "@shikijs/transformers": "^3.23.0",

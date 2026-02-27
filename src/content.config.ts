@@ -2,7 +2,7 @@ import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 import path from 'node:path';
 
-const userDir = process.env.ECHODOCS_DIR || process.cwd();
+const userDir = process.env.ECHOX_DIR || process.cwd();
 
 const docs = defineCollection({
   loader: glob({

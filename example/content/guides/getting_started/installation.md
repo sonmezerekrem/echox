@@ -7,7 +7,7 @@ icon: download-04
 ## Prerequisites
 
 > [!NOTE]
-> EchoDocs requires Node.js 18 or later. Check your version with `node --version`.
+> Echox requires Node.js 18 or later. Check your version with `node --version`.
 
 - **Node.js** 18 or later
 - **npm**, **yarn**, or **pnpm**
@@ -15,17 +15,17 @@ icon: download-04
 ## Install Globally
 
 ```bash
-npm install -g echodocs
+npm install -g echox
 ```
 
-Once installed, the `echodocs` command is available anywhere on your system.
+Once installed, the `echox` command is available anywhere on your system.
 
 ## Using npx
 
 If you prefer not to install globally, use npx:
 
 ```bash
-npx echodocs dev
+npx echox dev
 ```
 
 ## Using Docker
@@ -33,13 +33,13 @@ npx echodocs dev
 Pull the official image and mount your docs directory:
 
 ```bash
-docker run -v $(pwd):/docs -p 4321:4321 echodocs dev --host
+docker run -v $(pwd):/docs -p 4321:4321 echox dev --host
 ```
 
 For production builds:
 
 ```bash
-docker run -v $(pwd):/docs echodocs build
+docker run -v $(pwd):/docs echox build
 ```
 
 The static output will be in `./dist`.
@@ -49,19 +49,19 @@ The static output will be in `./dist`.
 Run the following to confirm everything is working:
 
 ```bash
-echodocs --version
+echox --version
 ```
 
 You should see the current version number printed to your terminal.
 
 ## Troubleshooting
 
-:::accordion{title="Command not found: echodocs"}
-Make sure you installed globally with `npm install -g echodocs`. If using a Node version manager (nvm, fnm), ensure the global bin directory is in your PATH.
+:::accordion{title="Command not found: echox"}
+Make sure you installed globally with `npm install -g echox`. If using a Node version manager (nvm, fnm), ensure the global bin directory is in your PATH.
 :::
 
 :::accordion{title="Port already in use"}
-If port 4321 is busy, EchoDocs will automatically try the next available port. You can also specify a port: `echodocs dev --port 3000`.
+If port 4321 is busy, Echox will automatically try the next available port. You can also specify a port: `echox dev --port 3000`.
 :::
 
 > [!WARNING]

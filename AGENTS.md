@@ -1,18 +1,18 @@
-# EchoDocs - Agent Guide
+# Echox - Agent Guide
 
-This file helps AI agents understand the EchoDocs codebase and how to work with it effectively.
+This file helps AI agents understand the Echox codebase and how to work with it effectively.
 
-## What is EchoDocs
+## What is Echox
 
-EchoDocs is an npm CLI tool that builds static documentation websites from markdown files. It wraps Astro 5 and is designed so end users only need `content/`, `assets/`, and `config.json` — no source code.
+Echox is an npm CLI tool that builds static documentation websites from markdown files. It wraps Astro 5 and is designed so end users only need `content/`, `assets/`, and `config.json` — no source code.
 
 ## Repository Layout
 
 ```
-echodocs/
-├── bin/echodocs.mjs          # CLI entry point (dev, build, preview, init)
+echox/
+├── bin/echox.mjs          # CLI entry point (dev, build, preview, init)
 ├── src/
-│   ├── content.config.ts     # Astro content collection (reads from ECHODOCS_DIR/content)
+│   ├── content.config.ts     # Astro content collection (reads from ECHOX_DIR/content)
 │   ├── layouts/
 │   │   └── DocsLayout.astro  # Main layout (header, sidebar, content, TOC, footer)
 │   ├── pages/
@@ -45,7 +45,7 @@ echodocs/
 │   ├── assets/
 │   ├── apis/
 │   └── config.json
-├── astro.config.mjs          # Dynamic Astro config (reads ECHODOCS_DIR env var)
+├── astro.config.mjs          # Dynamic Astro config (reads ECHOX_DIR env var)
 ├── package.json
 ├── Dockerfile
 └── docker-compose.yml
@@ -53,9 +53,9 @@ echodocs/
 
 ## Key Architecture Decisions
 
-### Environment Variable: ECHODOCS_DIR
+### Environment Variable: ECHOX_DIR
 
-All path resolution goes through `process.env.ECHODOCS_DIR`. The CLI sets this to the user's CWD, then spawns Astro with `--root` pointing at the package directory. This lets the bundled Astro project read content from any directory.
+All path resolution goes through `process.env.ECHOX_DIR`. The CLI sets this to the user's CWD, then spawns Astro with `--root` pointing at the package directory. This lets the bundled Astro project read content from any directory.
 
 ### Navigation Tree
 
@@ -68,12 +68,12 @@ The nav tree is built from the content collection entries:
 
 ### Theming
 
-Colors are injected as CSS custom properties via a `<style>` tag in `<head>`. The `getColorVars()` function in `colors.ts` maps a Tailwind color name to `--color-primary`, `--color-primary-bg`, etc. Dark mode uses `[data-theme='dark']` selector and localStorage key `echodocs-theme`.
+Colors are injected as CSS custom properties via a `<style>` tag in `<head>`. The `getColorVars()` function in `colors.ts` maps a Tailwind color name to `--color-primary`, `--color-primary-bg`, etc. Dark mode uses `[data-theme='dark']` selector and localStorage key `echox-theme`.
 
 ### Build Pipeline
 
 ```
-echodocs build
+echox build
   → astro build (generates HTML to dist/)
   → link checker (scans dist/ for broken internal hrefs)
   → pagefind (builds search index in dist/pagefind/)
@@ -82,7 +82,7 @@ echodocs build
 ## Development Workflow
 
 ```bash
-npm run dev      # Runs with ECHODOCS_DIR=./example
+npm run dev      # Runs with ECHOX_DIR=./example
 npm run build    # Builds example project
 npm run preview  # Previews built example
 ```
@@ -93,7 +93,7 @@ npm run preview  # Previews built example
 
 1. Add the field to `SiteConfig` interface in `src/utils/config.ts`
 2. Add validation logic in the `validateConfig` function in `src/utils/config.ts`
-3. Add the same validation in `bin/echodocs.mjs` (CLI-level early validation)
+3. Add the same validation in `bin/echox.mjs` (CLI-level early validation)
 4. Use the field in the relevant component or layout
 
 ### Adding a new component
@@ -115,7 +115,7 @@ All styles live in `src/styles/global.css`. The file uses CSS custom properties 
 ## Code Conventions
 
 - All source uses ES modules (`type: "module"` in package.json)
-- The CLI file (`bin/echodocs.mjs`) uses plain JavaScript (no TypeScript)
+- The CLI file (`bin/echox.mjs`) uses plain JavaScript (no TypeScript)
 - Astro components use `.astro` single-file format
 - Utility files in `src/utils/` are TypeScript
 - Client-side scripts in components use `is:inline` to avoid Vite bundling

@@ -11,8 +11,8 @@ import remarkComponents from './src/plugins/remark-components.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const userDir = process.env.ECHODOCS_DIR
-  ? path.resolve(process.env.ECHODOCS_DIR)
+const userDir = process.env.ECHOX_DIR
+  ? path.resolve(process.env.ECHOX_DIR)
   : process.cwd();
 
 function loadUserPlugins() {
@@ -39,9 +39,9 @@ const { remarkPlugins, rehypePlugins } = loadUserPlugins();
 
 const configPath = path.join(userDir, 'config.json');
 
-function echodocConfigReload() {
+function echoxConfigReload() {
   return {
-    name: 'echodocs-config-reload',
+    name: 'echox-config-reload',
     configureServer(server) {
       server.watcher.add(configPath);
       server.watcher.on('change', (changedPath) => {
@@ -68,7 +68,7 @@ export default defineConfig({
         transformerMetaHighlight(),
         transformerNotationDiff(),
         {
-          name: 'echodocs:title',
+          name: 'echox:title',
           pre(node) {
             const meta = this.options.meta?.__raw;
             if (!meta) return;
@@ -84,7 +84,7 @@ export default defineConfig({
     rehypePlugins,
   },
   vite: {
-    plugins: [echodocConfigReload()],
+    plugins: [echoxConfigReload()],
     resolve: {
       alias: {
         '@config': configPath,

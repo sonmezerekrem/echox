@@ -6,7 +6,7 @@ icon: route-01
 
 ## Automatic Routing
 
-EchoDocs generates routes automatically from your folder structure. There is no routing configuration file — the filesystem is the source of truth.
+Echox generates routes automatically from your folder structure. There is no routing configuration file — the filesystem is the source of truth.
 
 Every `.md` file inside `content/` becomes a page. The URL is derived from the file path:
 

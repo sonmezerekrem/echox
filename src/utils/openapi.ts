@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import type { NavTab, NavGroup, NavPage } from './navigation';
 
-const userDir = process.env.ECHODOCS_DIR || process.cwd();
+const userDir = process.env.ECHOX_DIR || process.cwd();
 
 export interface ApiParameter {
   name: string;

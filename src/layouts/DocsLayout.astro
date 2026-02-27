@@ -52,7 +52,7 @@ const { prev, next } = getPrevNext(navTree, currentSlug);
     <meta name="description" content={config.description ?? ''} />
     <script is:inline>
       (function() {
-        var theme = localStorage.getItem('echodocs-theme');
+        var theme = localStorage.getItem('echox-theme');
         if (!theme) {
           theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         }
@@ -124,7 +124,7 @@ const { prev, next } = getPrevNext(navTree, currentSlug);
           const current = document.documentElement.getAttribute('data-theme');
           const next = current === 'dark' ? 'light' : 'dark';
           document.documentElement.setAttribute('data-theme', next);
-          localStorage.setItem('echodocs-theme', next);
+          localStorage.setItem('echox-theme', next);
         });
       }
     </script>
