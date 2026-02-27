@@ -941,6 +941,19 @@ a.doc-card:hover {
 
 .task-section {
   margin-top: 8px;
+  border-radius: 6px;
+}
+
+.task-section-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  list-style: none;
+}
+
+.task-section[open] .task-section-summary {
+  margin-bottom: 4px;
 }
 
 .task-section-title {
@@ -949,7 +962,17 @@ a.doc-card:hover {
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--text-muted);
-  margin-bottom: 4px;
+}
+
+.task-section-chevron {
+  font-size: 10px;
+  color: var(--text-muted);
+  transform-origin: center;
+  transition: transform 0.12s ease-out;
+}
+
+.task-section[open] .task-section-chevron {
+  transform: rotate(180deg);
 }
 
 .task-steps {
