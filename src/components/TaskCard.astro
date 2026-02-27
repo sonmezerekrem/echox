@@ -32,13 +32,9 @@ const updatedShort = task.updatedAt ? task.updatedAt.slice(0, 10) : null;
 
 <article class="task-card" id={`task-${task.id}`}>
   <div class="task-card-header">
-    <span class="task-id">{task.id}</span>
-    <span class={`status-badge status-badge-sm status-${statusSlug}`}>{task.status}</span>
-  </div>
-  <h3 class="task-name">{task.name}</h3>
-  {(typeLabel || createdShort || updatedShort) && (
-    <div class="task-meta">
-      {typeLabel && <span class="task-type-pill">{typeLabel}</span>}
+    <div class="task-header-left">
+      <span class="task-type-pill">{typeLabel ?? 'Task'}</span>
+      <span class="task-id">{task.id}</span>
       {(createdShort || updatedShort) && (
         <span class="task-dates">
           {createdShort && <span>Created {createdShort}</span>}
@@ -51,16 +47,20 @@ const updatedShort = task.updatedAt ? task.updatedAt.slice(0, 10) : null;
         </span>
       )}
     </div>
-  )}
-  {task.description && (
-    <p class="task-description">{task.description}</p>
-  )}
+    <div class="task-header-right">
+      <span class={`status-badge status-${statusSlug}`}>{task.status}</span>
+    </div>
+  </div>
   {task.labels && task.labels.length > 0 && (
     <div class="task-labels">
       {task.labels.map((label) => (
         <span class="task-label">{label}</span>
       ))}
     </div>
+  )}
+  <h3 class="task-name">{task.name}</h3>
+  {task.description && (
+    <p class="task-description">{task.description}</p>
   )}
   {task.steps && task.steps.length > 0 && (
     <div class="task-section">

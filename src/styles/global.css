@@ -847,8 +847,20 @@ a.doc-card:hover {
 .task-card-header {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 4px;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.task-header-left {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.task-header-right {
+  display: flex;
+  align-items: center;
 }
 
 .task-id {
@@ -872,7 +884,7 @@ a.doc-card:hover {
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-  margin-bottom: 8px;
+  margin: 0 0 8px 0;
 }
 
 .task-type-pill {
@@ -907,7 +919,7 @@ a.doc-card:hover {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-bottom: 12px;
+  margin-bottom: 0;
 }
 
 .task-label {
