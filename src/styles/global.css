@@ -947,7 +947,6 @@ a.doc-card:hover {
 .task-section-summary {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   cursor: pointer;
   list-style: none;
 }
@@ -957,6 +956,9 @@ a.doc-card:hover {
 }
 
 .task-section-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
@@ -964,15 +966,20 @@ a.doc-card:hover {
   color: var(--text-muted);
 }
 
-.task-section-chevron {
-  font-size: 10px;
-  color: var(--text-muted);
-  transform-origin: center;
-  transition: transform 0.12s ease-out;
+.task-section-icon {
+  font-size: 13px;
 }
 
-.task-section[open] .task-section-chevron {
-  transform: rotate(180deg);
+.task-section-icon-down {
+  display: none;
+}
+
+.task-section[open] .task-section-icon-right {
+  display: none;
+}
+
+.task-section[open] .task-section-icon-down {
+  display: inline-flex;
 }
 
 .task-steps {

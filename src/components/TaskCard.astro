@@ -76,8 +76,11 @@ function getDependencyHref(dep: string): string {
   {task.steps && task.steps.length > 0 && (
     <details class="task-section">
       <summary class="task-section-summary">
-        <span class="task-section-title">Steps</span>
-        <span class="task-section-chevron" aria-hidden="true">▾</span>
+        <span class="task-section-title">
+          Steps
+          <i class="task-section-icon task-section-icon-right hgi-stroke hgi-arrow-right-01" aria-hidden="true" />
+          <i class="task-section-icon task-section-icon-down hgi-stroke hgi-arrow-down-01" aria-hidden="true" />
+        </span>
       </summary>
       <ol class="task-steps">
         {task.steps.map((step) => (
@@ -89,8 +92,11 @@ function getDependencyHref(dep: string): string {
   {task.acceptanceCriteria && task.acceptanceCriteria.length > 0 && (
     <details class="task-section">
       <summary class="task-section-summary">
-        <span class="task-section-title">Acceptance criteria</span>
-        <span class="task-section-chevron" aria-hidden="true">▾</span>
+        <span class="task-section-title">
+          Acceptance criteria
+          <i class="task-section-icon task-section-icon-right hgi-stroke hgi-arrow-right-01" aria-hidden="true" />
+          <i class="task-section-icon task-section-icon-down hgi-stroke hgi-arrow-down-01" aria-hidden="true" />
+        </span>
       </summary>
       <ul class="task-acceptance">
         {task.acceptanceCriteria.map((crit) => (
