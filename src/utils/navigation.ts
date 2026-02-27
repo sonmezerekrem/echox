@@ -136,6 +136,23 @@ export function buildNavTree(entries: CollectionEntry<'docs'>[]): NavTree {
   return { tabs };
 }
 
+/**
+ * Returns the display name for a doc/task path (e.g. "guides/core_concepts/theming" or "/guides/core_concepts/theming").
+ * Returns null if the path is not found in the nav tree.
+ */
+export function getPageNameByPath(navTree: NavTree, pathOrHref: string): string | null {
+  const normalized = pathOrHref.replace(/^\//, '');
+  for (const tab of navTree.tabs) {
+    for (const group of tab.groups) {
+      const page = group.pages.find(
+        (p) => p.slug === normalized || p.href === pathOrHref || p.href === `/${normalized}`
+      );
+      if (page) return page.name;
+    }
+  }
+  return null;
+}
+
 export function getFirstPage(navTree: NavTree): string | null {
   const firstTab = navTree.tabs[0];
   if (!firstTab) return null;

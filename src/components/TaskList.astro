@@ -1,12 +1,14 @@
 ---
+import type { NavTree } from '../utils/navigation';
 import type { Task } from '../utils/tasks';
 import TaskCard from './TaskCard.astro';
 
 interface Props {
   tasks: Task[];
+  navTree?: NavTree;
 }
 
-const { tasks } = Astro.props;
+const { tasks, navTree } = Astro.props;
 ---
 
 <div class="task-list">
@@ -16,7 +18,7 @@ const { tasks } = Astro.props;
     <ul class="task-list-grid">
       {tasks.map((task) => (
         <li>
-          <TaskCard task={task} />
+          <TaskCard task={task} navTree={navTree} />
         </li>
       ))}
     </ul>

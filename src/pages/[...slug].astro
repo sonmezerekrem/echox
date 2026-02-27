@@ -63,7 +63,7 @@ if (entry) {
     currentSlug={currentSlug!}
     headings={[]}
   >
-    <TaskList tasks={tasks ?? []} />
+    <TaskList tasks={tasks ?? []} navTree={navTree} />
   </DocsLayout>
 ) : DocContent && entry ? (
   <DocsLayout

@@ -1,14 +1,22 @@
 ---
+import type { NavTree } from '../utils/navigation';
 import type { Task } from '../utils/tasks';
+import { getPageNameByPath } from '../utils/navigation';
 
 interface Props {
   task: Task;
+  navTree?: NavTree;
 }
 
-const { task } = Astro.props;
-const relationItems = (task.relations ?? []).map((r) =>
-  typeof r === 'string' ? { label: r, url: r.startsWith('http') ? r : `/${r}` } : r
-);
+const { task, navTree } = Astro.props;
+const relationItems = (task.relations ?? []).map((r) => {
+  const item = typeof r === 'string' ? { label: r, url: r.startsWith('http') ? r : `/${r}` } : r;
+  const isInternal = item.url.startsWith('/') && !item.url.startsWith('//') && !item.url.startsWith('http');
+  const displayLabel = navTree && isInternal && !item.url.startsWith('/#')
+    ? getPageNameByPath(navTree, item.url.replace(/^#/, ''))
+    : null;
+  return { ...item, displayLabel };
+});
 const statusSlug = task.status.toLowerCase().replace(/\s+/g, '-');
 ---
 
@@ -40,7 +48,7 @@ const statusSlug = task.status.toLowerCase().replace(/\s+/g, '-');
               target={r.url.startsWith('http') ? '_blank' : undefined}
               rel={r.url.startsWith('http') ? 'noopener noreferrer' : undefined}
             >
-              {r.label ?? r.url}
+              {r.displayLabel ?? r.label ?? r.url}
             </a>
           </li>
         ))}
