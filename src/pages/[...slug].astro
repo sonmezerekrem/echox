@@ -53,6 +53,9 @@ let DocContent: Awaited<ReturnType<typeof render>>['Content'] | null = null;
 let docTitle = '';
 let docStatus: string | undefined;
 let docHeadings: Awaited<ReturnType<typeof render>>['headings'] = [];
+let tasksHeadings: { depth: number; slug: string; text: string }[] = [];
+let filteredTasks = tasks ?? [];
+
 if (entry) {
   const rendered = await render(entry);
   DocContent = rendered.Content;
@@ -64,6 +67,19 @@ if (entry) {
   docStatus = data.status;
 }
 
+if (tasksPage && Array.isArray(tasks)) {
+  filteredTasks = tasks.filter(
+    (t) =>
+      typeof t.status === 'string' &&
+      t.status.toLowerCase().replace(/\s+/g, '-') === (tasksStatus ?? '')
+  );
+  tasksHeadings = filteredTasks.map((t) => ({
+    depth: 2,
+    slug: `task-${t.id}`,
+    text: `${t.id}: ${t.name}`,
+  }));
+}
+
 ---
 
 {tasksPage ? (
@@ -72,14 +88,10 @@ if (entry) {
     navTree={navTree}
     activeTab={activeTab}
     currentSlug={currentSlug!}
-    headings={[]}
+    headings={tasksHeadings}
   >
     <TaskList
-      tasks={(tasks ?? []).filter(
-        (t) =>
-          typeof t.status === 'string' &&
-          t.status.toLowerCase().replace(/\s+/g, '-') === (tasksStatus ?? '')
-      )}
+      tasks={filteredTasks}
       navTree={navTree}
     />
   </DocsLayout>
