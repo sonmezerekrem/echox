@@ -6,9 +6,11 @@ import TaskCard from './TaskCard.astro';
 interface Props {
   tasks: Task[];
   navTree?: NavTree;
+  tabSlug?: string;
+  dependencyStatus?: Record<string, string>;
 }
 
-const { tasks, navTree } = Astro.props;
+const { tasks, navTree, tabSlug, dependencyStatus } = Astro.props;
 ---
 
 <div class="task-list">
@@ -18,7 +20,12 @@ const { tasks, navTree } = Astro.props;
     <ul class="task-list-grid">
       {tasks.map((task) => (
         <li>
-          <TaskCard task={task} navTree={navTree} />
+          <TaskCard
+            task={task}
+            navTree={navTree}
+            tabSlug={tabSlug}
+            dependencyStatus={dependencyStatus}
+          />
         </li>
       ))}
     </ul>

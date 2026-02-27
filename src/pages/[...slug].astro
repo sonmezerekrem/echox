@@ -55,6 +55,7 @@ let docStatus: string | undefined;
 let docHeadings: Awaited<ReturnType<typeof render>>['headings'] = [];
 let tasksHeadings: { depth: number; slug: string; text: string }[] = [];
 let filteredTasks = tasks ?? [];
+let dependencyStatus: Record<string, string> = {};
 
 if (entry) {
   const rendered = await render(entry);
@@ -68,6 +69,13 @@ if (entry) {
 }
 
 if (tasksPage && Array.isArray(tasks)) {
+  dependencyStatus = tasks.reduce<Record<string, string>>((map, t) => {
+    if (t.id && typeof t.status === 'string') {
+      map[t.id] = t.status.toLowerCase().replace(/\s+/g, '-');
+    }
+    return map;
+  }, {});
+
   filteredTasks = tasks.filter(
     (t) =>
       typeof t.status === 'string' &&
@@ -93,6 +101,8 @@ if (tasksPage && Array.isArray(tasks)) {
     <TaskList
       tasks={filteredTasks}
       navTree={navTree}
+      tabSlug={props.tabSlug}
+      dependencyStatus={dependencyStatus}
     />
   </DocsLayout>
 ) : DocContent && entry ? (

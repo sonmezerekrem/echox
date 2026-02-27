@@ -6,9 +6,11 @@ import { getPageNameByPath } from '../utils/navigation';
 interface Props {
   task: Task;
   navTree?: NavTree;
+  tabSlug?: string;
+  dependencyStatus?: Record<string, string>;
 }
 
-const { task, navTree } = Astro.props;
+const { task, navTree, tabSlug, dependencyStatus } = Astro.props;
 const relationItems = (task.relations ?? []).map((r) => {
   const item = typeof r === 'string' ? { label: r, url: r.startsWith('http') ? r : `/${r}` } : r;
   const isInternal = item.url.startsWith('/') && !item.url.startsWith('//') && !item.url.startsWith('http');
@@ -28,6 +30,15 @@ const typeLabel =
 
 const createdShort = task.createdAt ? task.createdAt.slice(0, 10) : null;
 const updatedShort = task.updatedAt ? task.updatedAt.slice(0, 10) : null;
+
+function getDependencyHref(dep: string): string {
+  const status = dependencyStatus?.[dep];
+  if (tabSlug && status) {
+    const slug = status.toLowerCase().replace(/\s+/g, '-');
+    return `/${tabSlug}/tasks/${slug}#task-${dep}`;
+  }
+  return `#task-${dep}`;
+}
 ---
 
 <article class="task-card" id={`task-${task.id}`}>
@@ -87,7 +98,7 @@ const updatedShort = task.updatedAt ? task.updatedAt.slice(0, 10) : null;
       <div class="task-section-title">Depends on</div>
       <div class="task-dependencies-list">
         {task.dependencies.map((dep) => (
-          <a href={`#task-${dep}`} class="task-dependency-pill">
+          <a href={getDependencyHref(dep)} class="task-dependency-pill">
             {dep}
           </a>
         ))}
