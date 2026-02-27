@@ -861,6 +861,7 @@ a.doc-card:hover {
 .task-header-right {
   display: flex;
   align-items: center;
+  gap: 6px;
 }
 
 .task-id {
@@ -1032,6 +1033,28 @@ a.doc-card:hover {
 
 .task-dependency-pill:hover {
   text-decoration: underline;
+}
+
+.task-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 9999px;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0;
+}
+
+.task-copy-btn:hover {
+  background: var(--color-surface);
+}
+
+.task-copy-btn i {
+  font-size: 14px;
 }
 
 .task-relations {

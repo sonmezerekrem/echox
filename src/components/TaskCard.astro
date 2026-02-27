@@ -39,6 +39,42 @@ function getDependencyHref(dep: string): string {
   }
   return `#task-${dep}`;
 }
+
+const copyLines: string[] = [];
+copyLines.push(`${task.id} — ${task.name}`);
+if (typeLabel) copyLines.push(`Type: ${typeLabel}`);
+copyLines.push(`Status: ${task.status}`);
+if (createdShort || updatedShort) {
+  copyLines.push(
+    `Created: ${createdShort ?? '-'} | Updated: ${updatedShort ?? '-'}`
+  );
+}
+if (task.labels && task.labels.length) {
+  copyLines.push(`Labels: ${task.labels.join(', ')}`);
+}
+if (task.description) {
+  copyLines.push('', task.description);
+}
+if (task.steps && task.steps.length) {
+  copyLines.push('', 'Steps:');
+  task.steps.forEach((s, i) => {
+    copyLines.push(`  ${i + 1}. ${s}`);
+  });
+}
+if (task.acceptanceCriteria && task.acceptanceCriteria.length) {
+  copyLines.push('', 'Acceptance criteria:');
+  task.acceptanceCriteria.forEach((c, i) => {
+    copyLines.push(`  - ${c}`);
+  });
+}
+if (task.dependencies && task.dependencies.length) {
+  copyLines.push('', `Depends on: ${task.dependencies.join(', ')}`);
+}
+if (relationItems.length) {
+  const relLabels = relationItems.map((r) => r.displayLabel ?? r.label ?? r.url);
+  copyLines.push('', `Related: ${relLabels.join(', ')}`);
+}
+const copyText = copyLines.join('\n');
 ---
 
 <article class="task-card" id={`task-${task.id}`}>
@@ -59,6 +95,14 @@ function getDependencyHref(dep: string): string {
       )}
     </div>
     <div class="task-header-right">
+      <button
+        type="button"
+        class="task-copy-btn"
+        aria-label="Copy task details"
+        data-task-copy={copyText}
+      >
+        <i class="hgi-stroke hgi-copy-01" aria-hidden="true" />
+      </button>
       <span class={`status-badge status-${statusSlug}`}>{task.status}</span>
     </div>
   </div>

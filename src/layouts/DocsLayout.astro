@@ -202,6 +202,38 @@ const { prev, next } = getPrevNext(navTree, currentSlug);
       })();
     </script>
 
+    <script is:inline>
+      (function() {
+        var buttons = document.querySelectorAll('.task-copy-btn[data-task-copy]');
+        if (!buttons.length) return;
+
+        buttons.forEach(function(btn) {
+          if (btn.__echoxTaskCopyBound) return;
+          btn.__echoxTaskCopyBound = true;
+
+          btn.addEventListener('click', function() {
+            var text = btn.getAttribute('data-task-copy') || '';
+            if (!text) return;
+            var icon = btn.querySelector('i');
+            navigator.clipboard.writeText(text).then(function() {
+              if (icon) {
+                icon.classList.remove('hgi-copy-01');
+                icon.classList.add('hgi-tick-01');
+              }
+              btn.classList.add('copied');
+              setTimeout(function() {
+                if (icon) {
+                  icon.classList.remove('hgi-tick-01');
+                  icon.classList.add('hgi-copy-01');
+                }
+                btn.classList.remove('copied');
+              }, 1500);
+            });
+          });
+        });
+      })();
+    </script>
+
     <script is:inline type="module">
       import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
 
