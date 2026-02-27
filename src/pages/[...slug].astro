@@ -18,16 +18,27 @@ export async function getStaticPaths() {
   });
 
   for (const tab of getTabsWithTasks()) {
-    paths.push({
-      params: { slug: `${tab}/tasks` },
-      props: {
-        tasksPage: true,
-        tabSlug: tab,
-        navTree: buildFullNavTree(entries),
-        activeTab: tab,
-        tasks: loadTasksForTab(tab),
-        currentSlug: `${tab}/tasks`,
-      },
+    const allTasks = loadTasksForTab(tab);
+    const fullNav = buildFullNavTree(entries);
+
+    ([
+      { slug: 'todo', title: 'Todo' },
+      { slug: 'in-progress', title: 'In progress' },
+      { slug: 'done', title: 'Done' },
+    ] as const).forEach(({ slug, title }) => {
+      paths.push({
+        params: { slug: `${tab}/tasks/${slug}` },
+        props: {
+          tasksPage: true,
+          tabSlug: tab,
+          navTree: fullNav,
+          activeTab: tab,
+          tasks: allTasks,
+          tasksStatus: slug,
+          tasksTitle: title,
+          currentSlug: `${tab}/tasks/${slug}`,
+        },
+      });
     });
   }
 
@@ -35,7 +46,7 @@ export async function getStaticPaths() {
 }
 
 const props = Astro.props;
-const { navTree, activeTab, tasksPage, tasks, currentSlug } = props;
+const { navTree, activeTab, tasksPage, tasks, currentSlug, tasksStatus, tasksTitle } = props;
 const entry = 'entry' in props ? props.entry : null;
 
 let DocContent: Awaited<ReturnType<typeof render>>['Content'] | null = null;
@@ -57,13 +68,20 @@ if (entry) {
 
 {tasksPage ? (
   <DocsLayout
-    title="Tasks"
+    title={tasksTitle ?? 'Tasks'}
     navTree={navTree}
     activeTab={activeTab}
     currentSlug={currentSlug!}
     headings={[]}
   >
-    <TaskList tasks={tasks ?? []} navTree={navTree} />
+    <TaskList
+      tasks={(tasks ?? []).filter(
+        (t) =>
+          typeof t.status === 'string' &&
+          t.status.toLowerCase().replace(/\s+/g, '-') === (tasksStatus ?? '')
+      )}
+      navTree={navTree}
+    />
   </DocsLayout>
 ) : DocContent && entry ? (
   <DocsLayout

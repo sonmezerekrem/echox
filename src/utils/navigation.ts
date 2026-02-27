@@ -107,17 +107,31 @@ export function buildNavTree(entries: CollectionEntry<'docs'>[]): NavTree {
   for (const tabSlug of getTabsWithTasks()) {
     const tab = tabsMap.get(tabSlug);
     if (!tab) continue;
-    const tasksPage: NavPage = {
-      slug: `${tabSlug}/tasks`,
-      name: 'Tasks',
-      href: `/${tabSlug}/tasks`,
-      order: Number.MAX_SAFE_INTEGER,
-      icon: 'task-01',
+    const todoPage: NavPage = {
+      slug: `${tabSlug}/tasks/todo`,
+      name: 'Todo',
+      href: `/${tabSlug}/tasks/todo`,
+      order: 1,
+      icon: 'left-to-right-list-bullet',
+    };
+    const inProgressPage: NavPage = {
+      slug: `${tabSlug}/tasks/in-progress`,
+      name: 'In progress',
+      href: `/${tabSlug}/tasks/in-progress`,
+      order: 2,
+      icon: 'pencil-edit-01',
+    };
+    const donePage: NavPage = {
+      slug: `${tabSlug}/tasks/done`,
+      name: 'Done',
+      href: `/${tabSlug}/tasks/done`,
+      order: 3,
+      icon: 'tick-double-02',
     };
     const tasksGroup: NavGroup = {
       slug: 'tasks',
       name: 'Tasks',
-      pages: [tasksPage],
+      pages: [todoPage, inProgressPage, donePage],
       order: Number.MAX_SAFE_INTEGER,
     };
     tab.groups.push(tasksGroup);
