@@ -1,4 +1,4 @@
-# Publish to GitHub Packages on every push to main.
+# Publish to GitHub Packages when compilation-related files change on main.
 # Uses the version from package.json — bump it before pushing when you want a new release.
 # Install globally: npm install -g @sonmezerekrem/echox
 # (Add a .npmrc or use: npm install -g @sonmezerekrem/echox --registry=https://npm.pkg.github.com)
@@ -8,6 +8,13 @@ name: Publish to GitHub Packages
 on:
   push:
     branches: [main]
+    paths:
+      - "bin/**"
+      - "src/**"
+      - "astro.config.mjs"
+      - "package.json"
+      - "package-lock.json"
+      - ".npmrc"
 
 permissions:
   contents: read
