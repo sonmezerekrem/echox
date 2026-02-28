@@ -100,7 +100,6 @@ body {
   align-items: center;
   height: var(--nav-height);
   gap: 1rem;
-  border-bottom: 1px solid var(--color-border);
 }
 
 .site-title {
@@ -280,7 +279,6 @@ body {
 
 .tab-bar {
   height: var(--subnav-height);
-  border-bottom: 1px solid var(--color-border);
 }
 
 .tab-bar-inner {
