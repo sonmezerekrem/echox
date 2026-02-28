@@ -1,122 +1,62 @@
-# Echox - Agent Guide
+# AGENTS.md
 
-This file helps AI agents understand the Echox codebase and how to work with it effectively.
+README for AI coding agents working on Echox. See [agents.md](https://agents.md/) for the format.
 
-## What is Echox
+## Project overview
 
-Echox is an npm CLI tool that builds static documentation websites from markdown files. It wraps Astro 5 and is designed so end users only need `content/`, `assets/`, and `config.json` — no source code.
+Echox is an npm CLI that builds static documentation sites from markdown. It wraps Astro 5. End users only need `content/`, `assets/`, and `config.json`; the package source lives in `bin/` and `src/`. All path resolution uses `process.env.ECHOX_DIR` (user's docs directory); the CLI sets it and spawns Astro with `--root` pointing at the package.
 
-## Repository Layout
+## Setup commands
+
+- Install deps: `npm install`
+- Dev server (example project): `npm run dev` (uses `ECHOX_DIR=./example`)
+- Build example: `npm run build` (builds `example/` to `example/dist`, then runs link check and Pagefind)
+- Preview built site: `npm run preview`
+
+Run these from the package root (where `package.json` and `src/` are).
+
+## Code style
+
+- ES modules only (`type: "module"` in package.json)
+- CLI: `bin/echox.mjs` is plain JavaScript (no TypeScript)
+- Astro: `.astro` single-file components; no React/Vue/Svelte
+- Utils: `src/utils/*.ts` are TypeScript
+- Client scripts in components: use `is:inline` to avoid Vite bundling
+- Styles: all in `src/styles/global.css`; theme uses CSS custom properties and `colors.ts` for `--color-primary`, etc.
+
+## Repository layout
 
 ```
 echox/
-├── bin/echox.mjs          # CLI entry point (dev, build, preview, init)
+├── bin/echox.mjs              # CLI (dev, build, preview, init, logo)
 ├── src/
-│   ├── content.config.ts     # Astro content collection (reads from ECHOX_DIR/content)
-│   ├── layouts/
-│   │   └── DocsLayout.astro  # Main layout (header, sidebar, content, TOC, footer)
-│   ├── pages/
-│   │   ├── index.astro       # Redirects to first page
-│   │   ├── [...slug].astro   # Catch-all for markdown pages
-│   │   ├── api/[...path].astro  # Catch-all for OpenAPI endpoints
-│   │   ├── 404.astro         # Custom error page
-│   │   ├── llms.txt.ts       # /llms.txt endpoint
-│   │   └── llms-full.txt.ts  # /llms-full.txt endpoint
-│   ├── components/
-│   │   ├── TabNav.astro      # Top-level tab navigation
-│   │   ├── Sidebar.astro     # Sidebar with groups and pages
-│   │   ├── TableOfContents.astro  # TOC with scroll spy
-│   │   ├── Breadcrumb.astro
-│   │   ├── SearchBar.astro   # Pagefind search modal
-│   │   ├── HeaderActions.astro  # Header links, GitHub, theme toggle
-│   │   ├── Footer.astro
-│   │   └── EndpointView.astro   # OpenAPI endpoint renderer
-│   ├── styles/
-│   │   └── global.css        # All styles (theming, layout, dark mode)
-│   ├── plugins/
-│   │   └── remark-components.mjs  # Built-in remark plugin (callouts, accordions, cards)
-│   └── utils/
-│       ├── config.ts         # Loads and validates config.json
-│       ├── navigation.ts     # Builds nav tree from content entries
-│       ├── colors.ts         # Tailwind color palettes + CSS variable generator
-│       └── openapi.ts        # Parses OpenAPI specs into nav tabs + endpoints
-├── example/                  # Example docs project for testing
-│   ├── content/
-│   ├── assets/
-│   ├── apis/
-│   └── config.json
-├── astro.config.mjs          # Dynamic Astro config (reads ECHOX_DIR env var)
-├── package.json
-├── Dockerfile
-└── docker-compose.yml
+│   ├── content.config.ts      # Content collection (ECHOX_DIR/content)
+│   ├── layouts/DocsLayout.astro
+│   ├── pages/                 # index, [...slug], api/[...path], 404, llms.txt
+│   ├── components/            # Sidebar, TOC, Header, Footer, SearchBar, etc.
+│   ├── styles/global.css      # All styles
+│   ├── plugins/remark-components.mjs  # Callouts, accordions, cards
+│   └── utils/                 # config.ts, navigation.ts, colors.ts, openapi.ts
+├── example/                   # Example docs project (content/, assets/, config.json)
+├── astro.config.mjs           # Dynamic config, uses ECHOX_DIR
+└── package.json
 ```
 
-## Key Architecture Decisions
+## Key architecture
 
-### Environment Variable: ECHOX_DIR
+- **ECHOX_DIR**: User docs root. CLI sets it; Astro and `src/utils` read from it for content, assets, config, apis.
+- **Navigation**: `content/{tab}/{group}/{page}.md` → three-level nav; OpenAPI in `apis/` merged as tabs. `_meta.json` in folders: `{ "order", "name" }`. See `src/utils/navigation.ts`, `buildFullNavTree()`.
+- **Theming**: `colors.ts` → `getColorVars()` injects CSS vars; dark mode `[data-theme='dark']`, key `echox-theme`.
+- **Build**: `echox build` → Astro build → link checker → Pagefind index.
 
-All path resolution goes through `process.env.ECHOX_DIR`. The CLI sets this to the user's CWD, then spawns Astro with `--root` pointing at the package directory. This lets the bundled Astro project read content from any directory.
+## Common modifications
 
-### Navigation Tree
+- **New config field**: Add to `SiteConfig` in `src/utils/config.ts`, validate in `validateConfig()` there and in `bin/echox.mjs`, then use in layout/components.
+- **New component**: Add `src/components/MyComponent.astro`, use in `DocsLayout.astro` or target page, add styles in `src/styles/global.css`.
+- **New page type**: New catch-all in `src/pages/`, `getStaticPaths()`, render inside `DocsLayout`.
+- **Styles**: Edit `src/styles/global.css` only; theme variables come from `colors.ts`.
 
-The nav tree is built from the content collection entries:
+## Testing / validation
 
-- `content/{tab}/{group}/{page}.md` → three-level hierarchy
-- OpenAPI specs in `apis/` are merged as additional tabs
-- `buildFullNavTree()` in `navigation.ts` returns the merged tree
-- Folders can contain `_meta.json` with `{ "order": number, "name": string }` to control sort order and display name (both optional, loaded by `loadMeta()` in `navigation.ts`)
-
-### Theming
-
-Colors are injected as CSS custom properties via a `<style>` tag in `<head>`. The `getColorVars()` function in `colors.ts` maps a Tailwind color name to `--color-primary`, `--color-primary-bg`, etc. Dark mode uses `[data-theme='dark']` selector and localStorage key `echox-theme`.
-
-### Build Pipeline
-
-```
-echox build
-  → astro build (generates HTML to dist/)
-  → link checker (scans dist/ for broken internal hrefs)
-  → pagefind (builds search index in dist/pagefind/)
-```
-
-## Development Workflow
-
-```bash
-npm run dev      # Runs with ECHOX_DIR=./example
-npm run build    # Builds example project
-npm run preview  # Previews built example
-```
-
-## Common Modifications
-
-### Adding a new config field
-
-1. Add the field to `SiteConfig` interface in `src/utils/config.ts`
-2. Add validation logic in the `validateConfig` function in `src/utils/config.ts`
-3. Add the same validation in `bin/echox.mjs` (CLI-level early validation)
-4. Use the field in the relevant component or layout
-
-### Adding a new component
-
-1. Create `src/components/MyComponent.astro`
-2. Import and use it in `DocsLayout.astro` or the relevant page
-3. Add styles to `src/styles/global.css`
-
-### Adding a new page type
-
-1. Create a new catch-all route in `src/pages/`
-2. Use `getStaticPaths()` for static generation
-3. Render inside `DocsLayout` to get the full navigation chrome
-
-### Modifying styles
-
-All styles live in `src/styles/global.css`. The file uses CSS custom properties defined in `:root` / `[data-theme='dark']` selectors. Dynamic color variables are injected via `colors.ts`.
-
-## Code Conventions
-
-- All source uses ES modules (`type: "module"` in package.json)
-- The CLI file (`bin/echox.mjs`) uses plain JavaScript (no TypeScript)
-- Astro components use `.astro` single-file format
-- Utility files in `src/utils/` are TypeScript
-- Client-side scripts in components use `is:inline` to avoid Vite bundling
-- No React/Vue/Svelte — pure Astro components only
+- No test suite in repo. After changes: run `npm run build` to ensure the example project builds and the link checker passes.
+- Config validation runs at CLI start (for init/logo/dev/build) via `validateConfig()` in `bin/echox.mjs`; keep it in sync with `src/utils/config.ts`.
