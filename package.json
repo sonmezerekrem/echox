@@ -1,6 +1,6 @@
 {
   "name": "@sonmezerekrem/echox",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "type": "module",
   "description": "Static documentation site builder powered by Astro",
   "bin": { "echox": "./bin/echox.mjs" },
