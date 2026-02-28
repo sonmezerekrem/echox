@@ -255,11 +255,100 @@ Your documentation is organized in a three-level folder structure:
     color: 'blue',
   };
 
+  const tasksYaml = `# Tasks for this tab. Add tasks with id, name, and status (todo | in-progress | done).
+# Optional: description, type, labels, steps, acceptance_criteria, relations, dependencies.
+# See docs for the full schema. This tab will show Todo / In progress / Done pages in the sidebar.
+tasks:
+  - id: TASK-1
+    name: Edit the introduction page
+    description: Customize content/docs/getting_started/introduction.md for your project.
+    type: docs
+    labels:
+      - onboarding
+    status: todo
+    steps:
+      - Open content/docs/getting_started/introduction.md
+      - Update the welcome text and next steps
+    acceptance_criteria:
+      - Introduction reflects your project name and goals
+  - id: TASK-2
+    name: Add your first real page
+    description: Create a new markdown file under content/docs/ to document a topic.
+    type: docs
+    labels:
+      - content
+    status: todo
+    steps:
+      - Create a new folder under content/docs/ (e.g. content/docs/guides/)
+      - Add a .md file (e.g. my_topic.md) with frontmatter and content
+    acceptance_criteria:
+      - New page appears in the sidebar and builds without errors
+    relations:
+      - docs/getting_started/introduction
+`;
+
+  const openApiSpec = {
+    openapi: '3.0.3',
+    info: {
+      title: 'Sample API',
+      description: 'A minimal OpenAPI spec to show how Echox renders API docs. Each file in apis/ becomes a tab; tags become sidebar groups; paths become pages.',
+      version: '1.0.0',
+    },
+    servers: [{ url: 'https://api.example.com/v1' }],
+    paths: {
+      '/hello': {
+        get: {
+          tags: ['Greeting'],
+          operationId: 'getHello',
+          summary: 'Say hello',
+          description: 'Returns a greeting. Use this to verify the API is up.',
+          parameters: [
+            { name: 'name', in: 'query', required: false, description: 'Name to greet', schema: { type: 'string', default: 'World' } },
+          ],
+          responses: {
+            200: {
+              description: 'Greeting message',
+              content: {
+                'application/json': {
+                  schema: { type: 'object', properties: { message: { type: 'string', example: 'Hello, World!' } } },
+                },
+              },
+            },
+          },
+        },
+      },
+      '/health': {
+        get: {
+          tags: ['System'],
+          operationId: 'getHealth',
+          summary: 'Health check',
+          description: 'Returns service health status.',
+          responses: {
+            200: {
+              description: 'Service is healthy',
+              content: {
+                'application/json': {
+                  schema: { type: 'object', properties: { status: { type: 'string', example: 'ok' } } },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+
   fs.mkdirSync(path.join(contentDir, 'docs', 'getting_started'), { recursive: true });
   fs.mkdirSync(path.join(userDir, 'assets'), { recursive: true });
+  fs.mkdirSync(path.join(userDir, 'apis'), { recursive: true });
   fs.writeFileSync(
     path.join(contentDir, 'docs', 'getting_started', 'introduction.md'),
     starterMd,
+  );
+  fs.writeFileSync(path.join(contentDir, 'docs', 'tasks.yml'), tasksYaml);
+  fs.writeFileSync(
+    path.join(userDir, 'apis', 'sample_api.json'),
+    JSON.stringify(openApiSpec, null, 2) + '\n',
   );
   fs.writeFileSync(configFile, JSON.stringify(config, null, 2) + '\n');
 
@@ -269,10 +358,12 @@ Your documentation is organized in a three-level folder structure:
   Created files:
     config.json
     content/docs/getting_started/introduction.md
+    content/docs/tasks.yml
+    apis/sample_api.json
     assets/
 
   Next steps:
-    echox dev      Start the development server
+    echox dev      Start the development server (Docs + Sample Api tabs; Tasks: Todo / In progress / Done)
     echox build    Build for production
 `);
 }

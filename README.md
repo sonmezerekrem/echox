@@ -6,13 +6,13 @@ Static documentation site builder powered by Astro. Build docs from markdown, op
 
 After pushing to `main`, the package is published to GitHub Packages with the version from `package.json`. Bump `version` in `package.json` before pushing when you want a new release.
 
-**One-time setup:** tell npm to use GitHub Packages for this scope (use your GitHub username or org instead of `sonmezerekrem` if you forked):
+**One-time setup:** you must tell npm to use GitHub Packages for this scope first; otherwise `npm install` will hit the public npm registry and get 404.
 
 ```bash
 echo "@sonmezerekrem:registry=https://npm.pkg.github.com" >> ~/.npmrc
 ```
 
-Authenticate (required for private repos; use a [personal access token](https://github.com/settings/tokens) with `read:packages`):
+Then authenticate (required for private repos; use a [personal access token](https://github.com/settings/tokens) with `read:packages`):
 
 ```bash
 npm login --registry=https://npm.pkg.github.com
@@ -25,6 +25,10 @@ npm login --registry=https://npm.pkg.github.com
 ```bash
 npm install -g @sonmezerekrem/echox
 ```
+
+**If you see `404 Not Found` or "not in this registry":** the package is on GitHub Packages, not npmjs.org. Ensure `~/.npmrc` contains `@sonmezerekrem:registry=https://npm.pkg.github.com` and that you are logged in with `npm login --registry=https://npm.pkg.github.com` (Password = GitHub personal access token with `read:packages`).
+
+**If you see "Access token expired or revoked":** run `npm login --registry=https://npm.pkg.github.com` again and use a valid [GitHub PAT](https://github.com/settings/tokens) (with `read:packages`).
 
 Then run:
 
