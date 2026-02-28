@@ -10,7 +10,17 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const packageRoot = path.resolve(__dirname, '..');
 const userDir = process.cwd();
 
-const COMMANDS = ['dev', 'build', 'preview', 'init'];
+const COMMANDS = ['dev', 'build', 'preview', 'init', 'logo'];
+
+// Hex 600 shade per palette (for logo/favicon background)
+const COLOR_HEX_600 = {
+  slate: '#475569', gray: '#4b5563', zinc: '#52525b', neutral: '#525252',
+  stone: '#57534e', red: '#dc2626', orange: '#ea580c', amber: '#d97706',
+  yellow: '#ca8a04', lime: '#65a30d', green: '#16a34a', emerald: '#059669',
+  teal: '#0d9488', cyan: '#0891b2', sky: '#0284c7', blue: '#2563eb',
+  indigo: '#4f46e5', violet: '#7c3aed', purple: '#9333ea', fuchsia: '#c026d3',
+  pink: '#db2777', rose: '#e11d48',
+};
 
 function printUsage() {
   console.log(`
@@ -24,6 +34,7 @@ function printUsage() {
     dev       Start development server with hot reload
     build     Build static site to ./dist
     preview   Preview the built site locally
+    logo      Generate logo and favicon (usage: echox logo <color>)
 
   Build options:
     --no-link-check   Skip broken link detection during build
@@ -266,6 +277,63 @@ Your documentation is organized in a three-level folder structure:
 `);
 }
 
+// ── Logo command ──
+
+function runLogo(colorArg) {
+  const configFile = path.join(userDir, 'config.json');
+  if (!fs.existsSync(configFile)) {
+    console.error('Error: No config.json found in the current directory.');
+    console.error('Run "echox logo <color>" from your docs project root.');
+    process.exit(1);
+  }
+
+  const config = validateConfig(configFile);
+  const letter = (config.name || 'E').trim().charAt(0).toUpperCase();
+  if (!letter) {
+    console.error('Error: config.json "name" is empty; cannot derive logo letter.');
+    process.exit(1);
+  }
+
+  const color = (colorArg || '').toLowerCase();
+  if (!VALID_COLORS.includes(color)) {
+    console.error(`Error: "${colorArg}" is not a valid color.`);
+    console.error(`Use one of: ${VALID_COLORS.join(', ')}`);
+    process.exit(1);
+  }
+
+  const fill = COLOR_HEX_600[color];
+  const assetsDir = path.join(userDir, 'assets');
+  if (!fs.existsSync(assetsDir)) {
+    fs.mkdirSync(assetsDir, { recursive: true });
+  }
+
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <rect width="32" height="32" rx="8" fill="${fill}"/>
+  <text x="16" y="22" text-anchor="middle" font-family="sans-serif" font-weight="700" font-size="18" fill="#fff">${letter}</text>
+</svg>
+`;
+
+  const logoPath = path.join(assetsDir, 'logo.svg');
+  const faviconPath = path.join(assetsDir, 'favicon.svg');
+  fs.writeFileSync(logoPath, svg);
+  fs.writeFileSync(faviconPath, svg);
+
+  const rawConfig = fs.readFileSync(configFile, 'utf-8');
+  const configToWrite = JSON.parse(rawConfig);
+  configToWrite.logo = '/logo.svg';
+  configToWrite.favicon = '/favicon.svg';
+  fs.writeFileSync(configFile, JSON.stringify(configToWrite, null, 2) + '\n');
+
+  console.log(`
+  Logo and favicon created for "${config.name}" (letter "${letter}", color ${color}).
+
+  Written:
+    assets/logo.svg
+    assets/favicon.svg
+    config.json (updated with "logo" and "favicon" paths)
+`);
+}
+
 // ── Link checker ──
 
 function checkLinks(outDir) {
@@ -330,6 +398,9 @@ if (command === 'init') {
     console.error(err);
     process.exit(1);
   });
+} else if (command === 'logo') {
+  const colorArg = process.argv[3];
+  runLogo(colorArg);
 } else if (!command || !COMMANDS.includes(command)) {
   printUsage();
   process.exit(command ? 1 : 0);
