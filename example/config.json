@@ -4,7 +4,7 @@
   "logo": "/logo.svg",
   "favicon": "/favicon.svg",
   "color": "lime",
-  "github": "https://github.com/echox/echox",
+  "github": "https://github.com/sonmezerekrem/echox",
   "links": [
     { "label": "Examples", "url": "https://example.com/examples", "external": true },
     { "label": "Blog", "url": "https://example.com/blog", "external": true },
@@ -23,7 +23,7 @@
       {
         "title": "Community",
         "links": [
-          { "label": "GitHub", "url": "https://github.com/echox/echox", "external": true },
+          { "label": "GitHub", "url": "https://github.com/sonmezerekrem/echox", "external": true },
           { "label": "Discord", "url": "https://discord.gg/echox", "external": true }
         ]
       },
