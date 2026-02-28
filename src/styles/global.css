@@ -748,13 +748,17 @@ body {
   margin: 12px 0;
 }
 
-a.doc-card:hover {
+.article a.doc-card {
+  text-decoration: none;
+}
+
+.doc-card:hover {
   border-color: var(--color-primary);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   transform: translateY(-1px);
 }
 
-[data-theme='dark'] a.doc-card:hover {
+[data-theme='dark'] .doc-card:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
@@ -776,6 +780,11 @@ a.doc-card:hover {
   flex-direction: column;
   gap: 4px;
   min-width: 0;
+}
+
+.doc-card-title,
+.doc-card-desc {
+  text-decoration: none;
 }
 
 .doc-card-title {
