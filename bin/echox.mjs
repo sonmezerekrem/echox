@@ -366,6 +366,37 @@ dist/
 
   fs.writeFileSync(path.join(userDir, '.gitignore'), gitignoreContent);
 
+  const dockerfileContent = `# Build docs with Echox (requires 'echox' on npm or use a custom base image)
+FROM node:22-alpine
+RUN npm install -g echox
+
+WORKDIR /docs
+COPY . .
+RUN echox build
+
+# Serve the built site with nginx
+FROM nginx:alpine
+COPY --from=0 /docs/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+`;
+
+  const dockerignoreContent = `# Build output
+dist/
+
+# Git and env
+.git/
+.env
+.env.*
+
+# Logs and OS
+*.log
+.DS_Store
+`;
+
+  fs.writeFileSync(path.join(userDir, 'Dockerfile'), dockerfileContent);
+  fs.writeFileSync(path.join(userDir, '.dockerignore'), dockerignoreContent);
+
   const gitDir = path.join(userDir, '.git');
   let gitInitialized = false;
   if (!fs.existsSync(gitDir)) {
@@ -382,11 +413,14 @@ dist/
     content/docs/tasks.yml
     apis/sample_api.json
     assets/
-    .gitignore${gitInitialized ? '\n    (git init)' : ''}
+    .gitignore
+    Dockerfile
+    .dockerignore${gitInitialized ? '\n    (git init)' : ''}
 
   Next steps:
     echox dev      Start the development server (Docs + Sample Api tabs; Tasks: Todo / In progress / Done)
     echox build    Build for production
+    docker build -t my-docs . && docker run -p 80:80 my-docs   Build and serve with Docker
 `);
 }
 
