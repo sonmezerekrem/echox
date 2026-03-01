@@ -47,7 +47,7 @@ tasks:
       - docs
     status: todo
     steps:
-      - Create a new page under guides explaining tasks.yml.
+      - Create a new page under task_management explaining tasks.yml.
       - Add examples for todo, in-progress and done tasks.
     acceptance_criteria:
       - Tasks feature is documented in the example docs.
