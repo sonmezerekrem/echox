@@ -4,6 +4,7 @@ import type { NavTree } from '../utils/navigation';
 import { getPrevNext } from '../utils/navigation';
 import { loadConfig } from '../utils/config';
 import { getColorVars } from '../utils/colors';
+import { withBase } from '../utils/base';
 import TabNav from '../components/TabNav.astro';
 import Sidebar from '../components/Sidebar.astro';
 import TableOfContents from '../components/TableOfContents.astro';
@@ -25,6 +26,7 @@ interface Props {
 
 const { title, navTree, activeTab, currentSlug, headings, status } = Astro.props;
 const config = loadConfig();
+const base = import.meta.env.BASE_URL || '/';
 
 const currentTab = navTree.tabs.find((t) => t.slug === activeTab);
 const groups = currentTab?.groups ?? [];
@@ -47,7 +49,7 @@ const { prev, next } = getPrevNext(navTree, currentSlug);
     <link href="https://fonts.googleapis.com/css2?family=Fustat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css" />
     <style set:html={colorCss}></style>
-    {config.favicon && <link rel="icon" href={config.favicon} />}
+    {config.favicon && <link rel="icon" href={withBase(config.favicon, base)} />}
     <title>{title} - {config.name}</title>
     <meta name="description" content={config.description ?? ''} />
     <script is:inline>
@@ -66,12 +68,12 @@ const { prev, next } = getPrevNext(navTree, currentSlug);
       <header class="header">
         <div class="container">
           <div class="header-top">
-            <a href="/" class="site-title">
-              {config.logo && <img src={config.logo} alt="" class="site-logo" />}
+            <a href={withBase('/', base)} class="site-title">
+              {config.logo && <img src={withBase(config.logo, base)} alt="" class="site-logo" />}
               {config.name}
             </a>
             <SearchBar />
-            <HeaderActions links={config.links} github={config.github} />
+            <HeaderActions links={config.links} github={config.github} base={base} />
             <button class="mobile-menu-toggle" aria-label="Toggle menu">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="3" y1="6" x2="21" y2="6" />
@@ -80,13 +82,13 @@ const { prev, next } = getPrevNext(navTree, currentSlug);
               </svg>
             </button>
           </div>
-          <TabNav tabs={navTree.tabs} activeTab={activeTab} />
+          <TabNav tabs={navTree.tabs} activeTab={activeTab} base={base} />
         </div>
       </header>
 
       <div class="container">
         <div class="layout">
-          <Sidebar groups={groups} currentSlug={currentSlug} />
+          <Sidebar groups={groups} currentSlug={currentSlug} base={base} />
 
           <main class="content">
             <article class="article" data-pagefind-body>
@@ -97,7 +99,7 @@ const { prev, next } = getPrevNext(navTree, currentSlug);
               </h1>
               <slot />
             </article>
-            <PrevNextNav prev={prev} next={next} />
+            <PrevNextNav prev={prev} next={next} base={base} />
           </main>
 
           <div class="toc-wrapper">
@@ -106,7 +108,7 @@ const { prev, next } = getPrevNext(navTree, currentSlug);
         </div>
       </div>
 
-      <Footer footer={config.footer} siteName={config.name} />
+      <Footer footer={config.footer} siteName={config.name} base={base} />
     </div>
 
     <script>

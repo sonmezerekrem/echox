@@ -1,22 +1,25 @@
 ---
 import type { HeaderLink } from '../utils/config';
+import { withBase } from '../utils/base';
 
 interface Props {
   links?: HeaderLink[];
   github?: string;
+  base?: string;
 }
 
-const { links = [], github } = Astro.props;
+const { links = [], github, base = '/' } = Astro.props;
 ---
 
 <div class="header-actions">
-  {links.map((link) =>
-    link.type === 'button' ? (
-      <a href={link.url} class="header-btn" target={link.external ? '_blank' : undefined} rel={link.external ? 'noopener noreferrer' : undefined}>
+  {links.map((link) => {
+    const url = link.external ? link.url : withBase(link.url, base);
+    return link.type === 'button' ? (
+      <a href={url} class="header-btn" target={link.external ? '_blank' : undefined} rel={link.external ? 'noopener noreferrer' : undefined}>
         {link.label}
       </a>
     ) : (
-      <a href={link.url} class="header-link" target={link.external ? '_blank' : undefined} rel={link.external ? 'noopener noreferrer' : undefined}>
+      <a href={url} class="header-link" target={link.external ? '_blank' : undefined} rel={link.external ? 'noopener noreferrer' : undefined}>
         {link.label}
         {link.external && (
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -24,8 +27,8 @@ const { links = [], github } = Astro.props;
           </svg>
         )}
       </a>
-    )
-  )}
+    );
+  })}
 
   {github && (
     <a href={github} class="header-icon-btn" target="_blank" rel="noopener noreferrer" aria-label="GitHub">

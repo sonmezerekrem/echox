@@ -7,7 +7,9 @@ const navTree = buildFullNavTree(entries);
 const firstPage = getFirstPage(navTree);
 
 if (firstPage) {
-  return Astro.redirect(firstPage);
+  const base = import.meta.env.BASE_URL || '/';
+  const target = base.endsWith('/') ? base.slice(0, -1) + firstPage : base + firstPage;
+  return Astro.redirect(target);
 }
 ---
 

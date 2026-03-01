@@ -1,12 +1,14 @@
 ---
 import type { FooterConfig } from '../utils/config';
+import { withBase } from '../utils/base';
 
 interface Props {
   footer?: FooterConfig;
   siteName: string;
+  base?: string;
 }
 
-const { footer, siteName } = Astro.props;
+const { footer, siteName, base = '/' } = Astro.props;
 
 if (!footer) return;
 
@@ -24,7 +26,7 @@ const { message, columns = [] } = footer;
               {col.links.map((link) => (
                 <li>
                   <a
-                    href={link.url}
+                    href={link.external ? link.url : withBase(link.url, base)}
                     class="footer-link"
                     target={link.external ? '_blank' : undefined}
                     rel={link.external ? 'noopener noreferrer' : undefined}

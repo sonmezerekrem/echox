@@ -1,12 +1,14 @@
 ---
 import type { NavGroup } from '../utils/navigation';
+import { withBase } from '../utils/base';
 
 interface Props {
   groups: NavGroup[];
   currentSlug: string;
+  base?: string;
 }
 
-const { groups, currentSlug } = Astro.props;
+const { groups, currentSlug, base = '/' } = Astro.props;
 ---
 
 <aside class="sidebar">
@@ -20,7 +22,7 @@ const { groups, currentSlug } = Astro.props;
             return (
               <li>
                 <a
-                  href={page.href}
+                  href={withBase(page.href, base)}
                   class:list={['sidebar-link', { active: isActive }]}
                 >
                   <i class={`sidebar-icon hgi-stroke hgi-${page.icon}`} aria-hidden="true" />

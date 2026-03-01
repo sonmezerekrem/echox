@@ -2,6 +2,7 @@
 import type { NavTree } from '../utils/navigation';
 import type { Task } from '../utils/tasks';
 import { getPageNameByPath } from '../utils/navigation';
+import { withBase } from '../utils/base';
 
 interface Props {
   task: Task;
@@ -11,6 +12,7 @@ interface Props {
 }
 
 const { task, navTree, tabSlug, dependencyStatus } = Astro.props;
+const base = import.meta.env.BASE_URL || '/';
 const relationItems = (task.relations ?? []).map((r) => {
   const item = typeof r === 'string' ? { label: r, url: r.startsWith('http') ? r : `/${r}` } : r;
   const isInternal = item.url.startsWith('/') && !item.url.startsWith('//') && !item.url.startsWith('http');
@@ -154,7 +156,7 @@ const copyText = copyLines.join('\n');
       <div class="task-section-title">Depends on</div>
       <div class="task-dependencies-list">
         {task.dependencies.map((dep) => (
-          <a href={getDependencyHref(dep)} class="task-dependency-pill">
+          <a href={withBase(getDependencyHref(dep), base)} class="task-dependency-pill">
             {dep}
           </a>
         ))}
@@ -168,7 +170,7 @@ const copyText = copyLines.join('\n');
         {relationItems.map((r) => (
           <li>
             <a
-              href={r.url}
+              href={withBase(r.url, base)}
               class="task-relation-link"
               target={r.url.startsWith('http') ? '_blank' : undefined}
               rel={r.url.startsWith('http') ? 'noopener noreferrer' : undefined}

@@ -1,18 +1,20 @@
 ---
 import type { NavPage } from '../utils/navigation';
+import { withBase } from '../utils/base';
 
 interface Props {
   prev: NavPage | null;
   next: NavPage | null;
+  base?: string;
 }
 
-const { prev, next } = Astro.props;
+const { prev, next, base = '/' } = Astro.props;
 ---
 
 {(prev || next) && (
   <nav class="prev-next" aria-label="Page navigation">
     {prev ? (
-      <a href={prev.href} class="prev-next-link prev-next-prev">
+      <a href={withBase(prev.href, base)} class="prev-next-link prev-next-prev">
         <span class="prev-next-direction">
           <i class="hgi-stroke hgi-arrow-left-01"></i>
           Previous
@@ -24,7 +26,7 @@ const { prev, next } = Astro.props;
       </a>
     ) : <div />}
     {next ? (
-      <a href={next.href} class="prev-next-link prev-next-next">
+      <a href={withBase(next.href, base)} class="prev-next-link prev-next-next">
         <span class="prev-next-direction">
           Next
           <i class="hgi-stroke hgi-arrow-right-01"></i>
