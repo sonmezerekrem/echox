@@ -53,8 +53,11 @@ function echoxConfigReload() {
   };
 }
 
+const basePath = process.env.ECHOX_BASE || '/';
+
 export default defineConfig({
   output: 'static',
+  base: basePath,
   outDir: path.join(userDir, 'dist'),
   publicDir: path.join(userDir, 'assets'),
   markdown: {

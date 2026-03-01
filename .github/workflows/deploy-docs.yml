@@ -1,5 +1,6 @@
 # Build the Echox example site and deploy it to GitHub Pages (docs for this repo).
 # Ensure Settings > Pages > Source is set to "GitHub Actions".
+# After deploy, docs live at: https://<user>.github.io/<repo>/ (e.g. .../echox/)
 
 name: Deploy Echox docs to GitHub Pages
 
@@ -32,6 +33,8 @@ jobs:
         run: npm ci
 
       - name: Build example docs
+        env:
+          ECHOX_BASE: /${{ github.event.repository.name }}/
         run: npm run build
 
       - name: Upload Pages artifact
