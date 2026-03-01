@@ -18,9 +18,8 @@ my-docs/
 │   │   └── core_concepts/    # Group: "Core Concepts"
 │   │       ├── routing.md
 │   │       └── theming.md
-│   └── api_reference/ # Tab: "Api Reference"
-│       └── endpoints/
-│           └── users.md
+│   └── resources/     # Tab: "Resources" (changelog, examples, etc.)
+│       └── changelog/
 ├── assets/            # Static files (images, fonts, etc.)
 │   └── logo.png
 ├── plugins/           # Custom remark/rehype plugins

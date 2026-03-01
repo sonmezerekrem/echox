@@ -54,8 +54,9 @@ tasks:
     created_at: 2025-12-04T09:00:00Z
     updated_at: 2025-12-04T09:00:00Z
     relations:
-      - label: API reference
-        url: https://example.com/api
+      - label: GitHub
+        url: https://github.com/sonmezerekrem/echox
+        external: true
   - id: ECX-4
     name: Improve search relevance
     description: Tune Pagefind configuration so core guides rank higher than changelog entries.

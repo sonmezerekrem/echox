@@ -26,7 +26,7 @@ The three-level folder structure creates the navigation:
 ```mermaid
 flowchart TD
     ContentDir["content/"] --> Tab1["guides/"]
-    ContentDir --> Tab2["api_reference/"]
+    ContentDir --> Tab2["resources/"]
     Tab1 --> Group1["getting_started/"]
     Tab1 --> Group2["core_concepts/"]
     Group1 --> Page1["introduction.md"]

@@ -6,8 +6,6 @@
   "color": "lime",
   "github": "https://github.com/sonmezerekrem/echox",
   "links": [
-    { "label": "Examples", "url": "https://example.com/examples", "external": true },
-    { "label": "Blog", "url": "https://example.com/blog", "external": true },
     { "label": "Get Started", "url": "/guides/getting_started/introduction", "type": "button" }
   ],
   "footer": {
@@ -23,15 +21,7 @@
       {
         "title": "Community",
         "links": [
-          { "label": "GitHub", "url": "https://github.com/sonmezerekrem/echox", "external": true },
-          { "label": "Discord", "url": "https://discord.gg/echox", "external": true }
-        ]
-      },
-      {
-        "title": "More",
-        "links": [
-          { "label": "Blog", "url": "https://example.com/blog", "external": true },
-          { "label": "Examples", "url": "https://example.com/examples", "external": true }
+          { "label": "GitHub", "url": "https://github.com/sonmezerekrem/echox", "external": true }
         ]
       }
     ]
