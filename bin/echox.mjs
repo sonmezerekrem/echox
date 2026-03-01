@@ -510,6 +510,7 @@ if (command === 'init') {
 
   const child = spawn(astroBin, args, {
     stdio: 'inherit',
+    cwd: packageRoot,
     env: {
       ...process.env,
       ECHOX_DIR: userDir,
