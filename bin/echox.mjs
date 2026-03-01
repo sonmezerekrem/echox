@@ -28,6 +28,7 @@ function printUsage() {
 
   Usage:
     echox <command> [options]
+    echox -v | --version   Print version
 
   Commands:
     init      Scaffold a new docs project in the current directory
@@ -538,7 +539,24 @@ function checkLinks(outDir) {
 
 // ── Main ──
 
-const command = process.argv[2];
+function getVersion() {
+  try {
+    const pkg = JSON.parse(fs.readFileSync(path.join(packageRoot, 'package.json'), 'utf-8'));
+    return pkg.version || '0.0.0';
+  } catch {
+    return '0.0.0';
+  }
+}
+
+const rawArg = process.argv[2];
+const isVersionFlag = rawArg === '-v' || rawArg === '-V' || rawArg === '--v' || rawArg === '--version' || rawArg === 'version';
+
+if (isVersionFlag) {
+  console.log(getVersion());
+  process.exit(0);
+}
+
+const command = rawArg;
 
 if (command === 'init') {
   runInit().catch((err) => {
