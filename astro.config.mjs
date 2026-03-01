@@ -39,16 +39,40 @@ const { remarkPlugins, rehypePlugins } = loadUserPlugins();
 
 const configPath = path.join(userDir, 'config.json');
 
+const contentDir = path.join(userDir, 'content');
+const apisDir = path.join(userDir, 'apis');
+const assetsDir = path.join(userDir, 'assets');
+
 function echoxConfigReload() {
   return {
     name: 'echox-config-reload',
     configureServer(server) {
+      // Watch user config, content, apis, and assets so edits trigger reload (they live outside Astro root)
       server.watcher.add(configPath);
-      server.watcher.on('change', (changedPath) => {
-        if (path.resolve(changedPath) === path.resolve(configPath)) {
-          server.ws.send({ type: 'full-reload' });
-        }
-      });
+      if (fs.existsSync(contentDir)) server.watcher.add(contentDir);
+      if (fs.existsSync(apisDir)) server.watcher.add(apisDir);
+      if (fs.existsSync(assetsDir)) server.watcher.add(assetsDir);
+
+      const triggerReload = (changedPath) => {
+        const resolved = path.resolve(changedPath);
+        if (resolved === path.resolve(configPath)) return true;
+        const contentResolved = path.resolve(contentDir);
+        const apisResolved = path.resolve(apisDir);
+        const assetsResolved = path.resolve(assetsDir);
+        if (
+          resolved.startsWith(contentResolved) ||
+          resolved.startsWith(apisResolved) ||
+          resolved.startsWith(assetsResolved)
+        )
+          return true;
+        return false;
+      };
+
+      for (const event of ['change', 'add', 'unlink']) {
+        server.watcher.on(event, (p) => {
+          if (triggerReload(p)) server.ws.send({ type: 'full-reload' });
+        });
+      }
     },
   };
 }
