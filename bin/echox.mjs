@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import path from 'node:path';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -352,6 +352,27 @@ tasks:
   );
   fs.writeFileSync(configFile, JSON.stringify(config, null, 2) + '\n');
 
+  const gitignoreContent = `# Build output
+dist/
+
+# Environment
+.env
+.env.*
+
+# Logs and OS
+*.log
+.DS_Store
+`;
+
+  fs.writeFileSync(path.join(userDir, '.gitignore'), gitignoreContent);
+
+  const gitDir = path.join(userDir, '.git');
+  let gitInitialized = false;
+  if (!fs.existsSync(gitDir)) {
+    const result = spawnSync('git', ['init'], { cwd: userDir, stdio: 'pipe', encoding: 'utf-8' });
+    gitInitialized = result.status === 0;
+  }
+
   console.log(`
   Project "${projectName}" created successfully!
 
@@ -361,6 +382,7 @@ tasks:
     content/docs/tasks.yml
     apis/sample_api.json
     assets/
+    .gitignore${gitInitialized ? '\n    (git init)' : ''}
 
   Next steps:
     echox dev      Start the development server (Docs + Sample Api tabs; Tasks: Todo / In progress / Done)
