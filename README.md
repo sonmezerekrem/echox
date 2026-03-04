@@ -54,11 +54,13 @@ Output goes to `dist/`. Use `echox preview` to serve it locally.
 
 ## Install
 
-**From npm (when published)**
+**From npm (npmjs.com)**
 
 ```bash
-npm install -g echox
+npm install -g @sonmezerekrem/echox
 ```
+
+After install, run `echox` from any directory that has a docs project (see [Project structure](#project-structure)).
 
 **From GitHub (clone and link)**
 
@@ -69,9 +71,7 @@ npm install
 npm link
 ```
 
-Then run `echox` from any directory that has a docs project (see [Project structure](#project-structure)).
-
-**Using GitHub Packages** (if you use the scoped package `@sonmezerekrem/echox`): set `@sonmezerekrem:registry=https://npm.pkg.github.com` in `~/.npmrc` and `npm login --registry=https://npm.pkg.github.com` with a token that has `read:packages`.
+**From GitHub Packages** (scoped): set `@sonmezerekrem:registry=https://npm.pkg.github.com` in `~/.npmrc` and `npm login --registry=https://npm.pkg.github.com` with a token that has `read:packages`. Then `npm install -g @sonmezerekrem/echox`.
 
 ## Project structure
 

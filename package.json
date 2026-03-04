@@ -15,7 +15,8 @@
   "scripts": {
     "dev": "ECHOX_DIR=./example astro dev",
     "build": "ECHOX_DIR=./example astro build && pagefind --site ./example/dist",
-    "preview": "ECHOX_DIR=./example astro preview"
+    "preview": "ECHOX_DIR=./example astro preview",
+    "publish:npm": "npm publish --registry https://registry.npmjs.org/ --access public"
   },
   "dependencies": {
     "@shikijs/transformers": "^3.23.0",

@@ -1,9 +1,12 @@
-# Publish to GitHub Packages when compilation-related files change on main.
-# Uses the version from package.json — bump it before pushing when you want a new release.
-# Install globally: npm install -g @sonmezerekrem/echox
-# (Add a .npmrc or use: npm install -g @sonmezerekrem/echox --registry=https://npm.pkg.github.com)
+# Publish to GitHub Packages and npmjs.com when compilation-related files change on main.
+# Bump version in package.json before pushing when you want a new release.
+#
+# Install: npm install -g @sonmezerekrem/echox  (from npm)
+# Or from GitHub Packages: set @sonmezerekrem:registry=https://npm.pkg.github.com in ~/.npmrc and npm login there.
+#
+# Add NPM_TOKEN in repo Secrets for npm publish: https://www.npmjs.com/settings/~yourusername/tokens (Automation/Publish).
 
-name: Publish to GitHub Packages
+name: Publish package
 
 on:
   push:
@@ -35,7 +38,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Publish package
+      - name: Publish to GitHub Packages
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to npm
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+          npm publish --registry https://registry.npmjs.org/ --access public
