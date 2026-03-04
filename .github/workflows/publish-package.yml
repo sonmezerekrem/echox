@@ -1,10 +1,8 @@
-# Publish to GitHub Packages and npmjs.com when compilation-related files change on main.
-# Bump version in package.json before pushing when you want a new release.
+# Publish to GitHub Packages and/or npmjs.com.
+# - Auto: runs on push to main when package files change (publishes to both).
+# - Manual: Actions → Publish package → Run workflow → choose branch and destination.
 #
-# Install: npm install -g @sonmezerekrem/echox  (from npm)
-# Or from GitHub Packages: set @sonmezerekrem:registry=https://npm.pkg.github.com in ~/.npmrc and npm login there.
-#
-# Add NPM_TOKEN in repo Secrets for npm publish: https://www.npmjs.com/settings/~yourusername/tokens (Automation/Publish).
+# Add NPM_TOKEN in repo Secrets for npm: https://www.npmjs.com/settings/~yourusername/tokens
 
 name: Publish package
 
@@ -18,6 +16,22 @@ on:
       - "package.json"
       - "package-lock.json"
       - ".npmrc"
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to publish from'
+        required: true
+        default: 'main'
+        type: string
+      destination:
+        description: 'Where to publish'
+        required: true
+        default: 'both'
+        type: choice
+        options:
+          - github
+          - npm
+          - both
 
 permissions:
   contents: read
@@ -28,6 +42,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.branch || github.ref }}
 
       - uses: actions/setup-node@v4
         with:
@@ -39,11 +55,13 @@ jobs:
         run: npm ci
 
       - name: Publish to GitHub Packages
+        if: github.event_name != 'workflow_dispatch' || inputs.destination == 'github' || inputs.destination == 'both'
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to npm
+        if: github.event_name != 'workflow_dispatch' || inputs.destination == 'npm' || inputs.destination == 'both'
         run: |
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
           npm publish --registry https://registry.npmjs.org/ --access public
