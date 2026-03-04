@@ -45,5 +45,4 @@ jobs:
       - name: Publish to npm
         run: |
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
-          echo "registry=https://registry.npmjs.org/" >> .npmrc
-          npm publish --access public
+          npm publish --registry https://registry.npmjs.org/ --access public
