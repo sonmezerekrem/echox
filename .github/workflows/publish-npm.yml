@@ -1,0 +1,49 @@
+# Publish to npmjs.com.
+# Auto: on push to main when package files change.
+# Manual: Actions → Publish to npm → Run workflow (optional: choose branch).
+#
+# Add NPM_TOKEN in repo Secrets: https://www.npmjs.com/settings/~yourusername/tokens (Automation/Publish).
+
+name: Publish to npm
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "bin/**"
+      - "src/**"
+      - "astro.config.mjs"
+      - "package.json"
+      - "package-lock.json"
+      - ".npmrc"
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to publish from'
+        required: true
+        default: 'main'
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.branch || github.ref }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Publish to npm
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+          echo "registry=https://registry.npmjs.org/" >> .npmrc
+          npm publish --access public

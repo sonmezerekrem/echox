@@ -1,0 +1,52 @@
+# Publish to GitHub Packages.
+# Auto: on push to main when package files change.
+# Manual: Actions → Publish to GitHub Packages → Run workflow (optional: choose branch).
+#
+# If 401: add secret GH_PACKAGES_TOKEN (PAT with write:packages) or repo Settings → Actions
+# → Workflow permissions → Read and write permissions.
+
+name: Publish to GitHub Packages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "bin/**"
+      - "src/**"
+      - "astro.config.mjs"
+      - "package.json"
+      - "package-lock.json"
+      - ".npmrc"
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to publish from'
+        required: true
+        default: 'main'
+        type: string
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.branch || github.ref }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@sonmezerekrem"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Publish to GitHub Packages
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN || secrets.GITHUB_TOKEN }}
