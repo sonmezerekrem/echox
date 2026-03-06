@@ -349,6 +349,8 @@ tasks:
   );
   fs.writeFileSync(configFile, JSON.stringify(config, null, 2) + '\n');
 
+  generateLogo(config.color);
+
   const gitignoreContent = `# Build output
 dist/
 
@@ -426,6 +428,8 @@ dist/
     guides/tasks.yml
     apis/sample_api.json
     assets/
+    assets/logo.svg
+    assets/favicon.svg
     .gitignore
     Dockerfile
     .dockerignore${gitNote}
@@ -438,6 +442,33 @@ dist/
 }
 
 // ── Logo command ──
+
+function generateLogo(color) {
+  const configFile = path.join(userDir, 'config.json');
+  const raw = fs.readFileSync(configFile, 'utf-8');
+  const config = JSON.parse(raw);
+  const letter = (config.name || 'E').trim().charAt(0).toUpperCase() || 'E';
+  const c = (color || config.color || 'blue').toLowerCase();
+  const fill = COLOR_HEX_600[c] || COLOR_HEX_600.blue;
+
+  const assetsDir = path.join(userDir, 'assets');
+  if (!fs.existsSync(assetsDir)) {
+    fs.mkdirSync(assetsDir, { recursive: true });
+  }
+
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <rect width="32" height="32" rx="8" fill="${fill}"/>
+  <text x="16" y="22" text-anchor="middle" font-family="sans-serif" font-weight="700" font-size="18" fill="#fff">${letter}</text>
+</svg>
+`;
+
+  fs.writeFileSync(path.join(assetsDir, 'logo.svg'), svg);
+  fs.writeFileSync(path.join(assetsDir, 'favicon.svg'), svg);
+
+  config.logo = '/logo.svg';
+  config.favicon = '/favicon.svg';
+  fs.writeFileSync(configFile, JSON.stringify(config, null, 2) + '\n');
+}
 
 function runLogo(colorArg) {
   const configFile = path.join(userDir, 'config.json');
@@ -461,28 +492,7 @@ function runLogo(colorArg) {
     process.exit(1);
   }
 
-  const fill = COLOR_HEX_600[color];
-  const assetsDir = path.join(userDir, 'assets');
-  if (!fs.existsSync(assetsDir)) {
-    fs.mkdirSync(assetsDir, { recursive: true });
-  }
-
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
-  <rect width="32" height="32" rx="8" fill="${fill}"/>
-  <text x="16" y="22" text-anchor="middle" font-family="sans-serif" font-weight="700" font-size="18" fill="#fff">${letter}</text>
-</svg>
-`;
-
-  const logoPath = path.join(assetsDir, 'logo.svg');
-  const faviconPath = path.join(assetsDir, 'favicon.svg');
-  fs.writeFileSync(logoPath, svg);
-  fs.writeFileSync(faviconPath, svg);
-
-  const rawConfig = fs.readFileSync(configFile, 'utf-8');
-  const configToWrite = JSON.parse(rawConfig);
-  configToWrite.logo = '/logo.svg';
-  configToWrite.favicon = '/favicon.svg';
-  fs.writeFileSync(configFile, JSON.stringify(configToWrite, null, 2) + '\n');
+  generateLogo(color);
 
   console.log(`
   Logo and favicon created for "${config.name}" (letter "${letter}", color ${color}).
