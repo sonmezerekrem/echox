@@ -8,6 +8,7 @@ import {
 } from '@shikijs/transformers';
 import remarkDirective from 'remark-directive';
 import remarkComponents from './src/plugins/remark-components.mjs';
+import remarkStripH1WhenUsedAsTitle from './src/plugins/remark-strip-h1-when-used-as-title.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -107,7 +108,7 @@ export default defineConfig({
         },
       ],
     },
-    remarkPlugins: [remarkDirective, remarkComponents, ...remarkPlugins],
+    remarkPlugins: [remarkDirective, remarkComponents, remarkStripH1WhenUsedAsTitle, ...remarkPlugins],
     rehypePlugins,
   },
   vite: {

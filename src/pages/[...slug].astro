@@ -4,12 +4,22 @@ import DocsLayout from '../layouts/DocsLayout.astro';
 import TaskList from '../components/TaskList.astro';
 import { buildFullNavTree, findCurrentTab } from '../utils/navigation';
 import { getTabsWithTasks, loadTasksForTab } from '../utils/tasks';
+import { getFirstH1AsName } from '../utils/page-name';
 
 export async function getStaticPaths() {
   const entries = await getCollection('docs');
-  const navTree = buildFullNavTree(entries);
+  const augmentedEntries = entries.map((entry) => {
+    const data = entry.data as { name?: string; title?: string };
+    if (data.name ?? data.title) return entry;
+    const nameFromH1 = getPageNameFromFile(entry.id);
+    if (nameFromH1) {
+      return { ...entry, data: { ...entry.data, name: nameFromH1 } };
+    }
+    return entry;
+  });
+  const navTree = buildFullNavTree(augmentedEntries);
 
-  const paths = entries.map((entry) => {
+  const paths = augmentedEntries.map((entry) => {
     const currentTab = findCurrentTab(navTree, entry.id);
     return {
       params: { slug: entry.id },

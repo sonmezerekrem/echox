@@ -1,10 +1,12 @@
 {
   "name": "@sonmezerekrem/echox",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "type": "module",
   "description": "Static documentation site builder powered by Astro",
   "license": "GPL-3.0-or-later",
-  "bin": { "echox": "./bin/echox.mjs" },
+  "bin": {
+    "echox": "./bin/echox.mjs"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/sonmezerekrem/echox.git"
@@ -21,6 +23,7 @@
   "dependencies": {
     "@shikijs/transformers": "^3.23.0",
     "astro": "^5.0.0",
+    "gray-matter": "^4.0.3",
     "pagefind": "^1.4.0",
     "remark-directive": "^4.0.0",
     "yaml": "^2.8.2"
