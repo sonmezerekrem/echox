@@ -1,6 +1,5 @@
 ---
 import type { NavGroup } from '../utils/navigation';
-import { groupContainsSlug } from '../utils/navigation';
 import { withBase } from '../utils/base';
 import SidebarGroup from './SidebarGroup.astro';
 
@@ -11,10 +10,9 @@ interface Props {
 }
 
 const { group, currentSlug, base } = Astro.props;
-const isOpen = groupContainsSlug(group, currentSlug);
 ---
 
-<details class="sidebar-group" open={isOpen}>
+<details class="sidebar-group" open>
   <summary class="sidebar-group-title">
     <span class="sidebar-group-title-text">{group.name}</span>
     <i class="sidebar-group-icon sidebar-group-icon-right hgi-stroke hgi-arrow-right-01" aria-hidden="true" />
