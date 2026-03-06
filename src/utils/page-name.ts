@@ -8,14 +8,16 @@ import { parse as parseYaml } from 'yaml';
 
 const userDir = process.env.ECHOX_DIR || process.cwd();
 
-/** Matches {key="value"} blocks, supports multiple: {label="Implemented" status="beta"} */
-const ATTR_BLOCK_RE = /\s*\{([^}]*)\}\s*$/;
-/** Matches key="value" pairs inside the block */
+/** Matches a single {key="value"} block */
+const ATTR_BLOCK_RE = /\s*\{([^}]*)\}\s*/g;
+/** Matches key="value" pairs inside a block */
 const ATTR_PAIR_RE = /(\w+)\s*=\s*"([^"]*)"/g;
 
 export interface H1Result {
   name: string;
   attributes?: Record<string, string>;
+  /** All label values from {label="X"} blocks (supports multiple: {label="A"} {label="B"}) */
+  labels?: string[];
 }
 
 /** Normalizes status/label for CSS class: "Implemented" → "implemented", "In Review" → "in-review" */
