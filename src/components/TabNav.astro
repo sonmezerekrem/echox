@@ -1,5 +1,6 @@
 ---
 import type { NavTab } from '../utils/navigation';
+import { flattenPages } from '../utils/navigation';
 import { withBase } from '../utils/base';
 
 interface Props {
@@ -14,7 +15,8 @@ const { tabs, activeTab, base = '/' } = Astro.props;
 <nav class="tab-bar">
   <div class="tab-bar-inner">
     {tabs.map((tab) => {
-      const firstPage = tab.groups[0]?.pages[0];
+      const flatPages = tab.groups.flatMap((g) => flattenPages(g));
+      const firstPage = flatPages[0];
       const href = firstPage ? withBase(firstPage.href, base) : '#';
       const isActive = tab.slug === activeTab;
       return (
