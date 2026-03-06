@@ -1,0 +1,30 @@
+{
+  "name": "Echox",
+  "description": "Static documentation site builder powered by Astro",
+  "logo": "/logo.svg",
+  "favicon": "/favicon.svg",
+  "color": "lime",
+  "theme": "default",
+  "github": "https://github.com/sonmezerekrem/echox",
+  "links": [
+    { "label": "Get Started", "url": "/guides/getting_started/introduction", "type": "button" }
+  ],
+  "footer": {
+    "message": "Built with Echox",
+    "columns": [
+      {
+        "title": "Documentation",
+        "links": [
+          { "label": "Guides", "url": "/guides/getting_started/introduction" },
+          { "label": "Features", "url": "/features/markdown/callouts" }
+        ]
+      },
+      {
+        "title": "Community",
+        "links": [
+          { "label": "GitHub", "url": "https://github.com/sonmezerekrem/echox", "external": true }
+        ]
+      }
+    ]
+  }
+}

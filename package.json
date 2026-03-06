@@ -15,9 +15,9 @@
     "registry": "https://npm.pkg.github.com"
   },
   "scripts": {
-    "dev": "ECHOX_DIR=./example astro dev",
-    "build": "ECHOX_DIR=./example astro build && pagefind --site ./example/dist",
-    "preview": "ECHOX_DIR=./example astro preview",
+    "dev": "ECHOX_DIR=./docs astro dev",
+    "build": "ECHOX_DIR=./docs astro build && pagefind --site ./docs/dist",
+    "preview": "ECHOX_DIR=./docs astro preview",
     "publish:npm": "npm publish --registry https://registry.npmjs.org/ --access public"
   },
   "dependencies": {
