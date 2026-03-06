@@ -67,7 +67,7 @@ const { prev, next } = getPrevNext(navTree, currentSlug);
         <div class="container">
           <div class="header-top">
             <a href={withBase('/', base)} class="site-title">
-              {config.logo && <img src={withBase(config.logo, base)} alt="" class="site-logo" />}
+              {config.logo && <img src={withBase(config.logo, base)} alt={config.name} class="site-logo" />}
               {config.name}
             </a>
             <SearchBar />
@@ -88,7 +88,7 @@ const { prev, next } = getPrevNext(navTree, currentSlug);
         <div class="layout">
           <Sidebar groups={groups} currentSlug={currentSlug} base={base} />
 
-          <main class="content">
+          <main class="content" id="main-content">
             <article class="article" data-pagefind-body>
               <Breadcrumb trail={breadcrumbTrail} />
               <h1 class="page-title">

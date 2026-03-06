@@ -30,20 +30,27 @@ export function toStatusSlug(val: string): string {
  * e.g. "My Feature {label=\"Implemented\"}" → { name: "My Feature", attributes: { label: "Implemented" } }
  */
 export function parseH1WithAttributes(rawText: string): H1Result {
-  const trimmed = rawText.trim();
-  const blockMatch = trimmed.match(ATTR_BLOCK_RE);
-  const attributes: Record<string, string> = {};
+  const trimmed = typeof rawText === 'string' ? rawText.trim() : '';
+  if (!trimmed) return { name: '' };
 
-  if (blockMatch) {
-    const blockContent = blockMatch[1];
+  const attributes: Record<string, string> = {};
+  const labels: string[] = [];
+
+  for (const m of trimmed.matchAll(ATTR_BLOCK_RE)) {
+    const blockContent = m[1];
+    if (blockContent == null || typeof blockContent !== 'string') continue;
     for (const pairMatch of blockContent.matchAll(ATTR_PAIR_RE)) {
       attributes[pairMatch[1]] = pairMatch[2];
+      if (pairMatch[1] === 'label') labels.push(pairMatch[2]);
     }
-    const cleanName = trimmed.replace(ATTR_BLOCK_RE, '').trim();
-    return { name: cleanName || trimmed, attributes: Object.keys(attributes).length ? attributes : undefined };
   }
 
-  return { name: trimmed };
+  const cleanName = trimmed.replace(ATTR_BLOCK_RE, '').trim();
+  return {
+    name: cleanName || trimmed,
+    ...(Object.keys(attributes).length ? { attributes } : {}),
+    ...(labels.length ? { labels } : {}),
+  };
 }
 
 /**
@@ -79,7 +86,8 @@ export function getFirstH1AsNameAndAttrs(entryId: string): H1Result | null {
 
   const content = parts.length >= 2 ? parts.slice(2).join('---').trim() : raw.trim();
   const match = content.match(/^#\s+(.+)$/m);
-  if (!match) return null;
+  const h1Text = match?.[1];
+  if (h1Text == null || typeof h1Text !== 'string') return null;
 
-  return parseH1WithAttributes(match[1].trim());
+  return parseH1WithAttributes(h1Text.trim());
 }
