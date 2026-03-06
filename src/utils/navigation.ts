@@ -253,7 +253,7 @@ export function getFirstPage(navTree: NavTree): string | null {
   return firstPage.href;
 }
 
-function groupContainsSlug(group: NavGroup, slug: string): boolean {
+export function groupContainsSlug(group: NavGroup, slug: string): boolean {
   if (group.pages.some((p) => p.slug === slug)) return true;
   if (group.children?.length) {
     return group.children.some((c) => groupContainsSlug(c, slug));

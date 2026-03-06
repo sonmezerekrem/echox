@@ -1,5 +1,6 @@
 ---
 import type { NavGroup } from '../utils/navigation';
+import { groupContainsSlug } from '../utils/navigation';
 import { withBase } from '../utils/base';
 import SidebarGroup from './SidebarGroup.astro';
 
@@ -10,34 +11,37 @@ interface Props {
 }
 
 const { group, currentSlug, base } = Astro.props;
+const isOpen = groupContainsSlug(group, currentSlug);
 ---
 
-<div class="sidebar-group">
-  <div class="sidebar-group-title">{group.name}</div>
-  {group.children?.length ? (
-    <div class="sidebar-subgroups">
-      {group.children.map((child) => (
-        <SidebarGroup group={child} currentSlug={currentSlug} base={base} />
-      ))}
-    </div>
-  ) : null}
-  {group.pages.length ? (
-    <ul class="sidebar-list">
-      {group.pages.map((page) => {
-        const isActive = page.slug === currentSlug;
-        return (
-          <li>
-            <a
-              href={withBase(page.href, base)}
-              class:list={['sidebar-link', { active: isActive }]}
-            >
-              <i class={`sidebar-icon hgi-stroke hgi-${page.icon}`} aria-hidden="true" />
-              <span>{page.name}</span>
-              {page.status && <span class={`status-badge status-badge-sm status-${page.status}`}>{page.status}</span>}
-            </a>
-          </li>
-        );
-      })}
-    </ul>
-  ) : null}
-</div>
+<details class="sidebar-group" open={isOpen}>
+  <summary class="sidebar-group-title">{group.name}</summary>
+  <div class="sidebar-group-content">
+    {group.children?.length ? (
+      <div class="sidebar-subgroups">
+        {group.children.map((child) => (
+          <SidebarGroup group={child} currentSlug={currentSlug} base={base} />
+        ))}
+      </div>
+    ) : null}
+    {group.pages.length ? (
+      <ul class="sidebar-list">
+        {group.pages.map((page) => {
+          const isActive = page.slug === currentSlug;
+          return (
+            <li>
+              <a
+                href={withBase(page.href, base)}
+                class:list={['sidebar-link', { active: isActive }]}
+              >
+                <i class={`sidebar-icon hgi-stroke hgi-${page.icon}`} aria-hidden="true" />
+                <span>{page.name}</span>
+                {page.status && <span class={`status-badge status-badge-sm status-${page.status}`}>{page.status}</span>}
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    ) : null}
+  </div>
+</details>
