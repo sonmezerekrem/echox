@@ -484,6 +484,40 @@ body {
   max-width: 680px;
 }
 
+/* Wide screens: use more of the viewport (4K, ultrawide) */
+@media (min-width: 1600px) {
+  :root,
+  [data-theme='light'],
+  [data-theme='dark'] {
+    --container-max-width: 1600px;
+  }
+  .article {
+    max-width: 760px;
+  }
+}
+
+@media (min-width: 1920px) {
+  :root,
+  [data-theme='light'],
+  [data-theme='dark'] {
+    --container-max-width: 1920px;
+  }
+  .article {
+    max-width: 820px;
+  }
+}
+
+@media (min-width: 2560px) {
+  :root,
+  [data-theme='light'],
+  [data-theme='dark'] {
+    --container-max-width: 2400px;
+  }
+  .article {
+    max-width: 880px;
+  }
+}
+
 /* Breadcrumb */
 
 .breadcrumb {
