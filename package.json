@@ -1,6 +1,6 @@
 {
   "name": "@sonmezerekrem/echox",
-  "version": "1.11.1",
+  "version": "1.11.2",
   "type": "module",
   "description": "Static documentation site builder powered by Astro",
   "license": "GPL-3.0-or-later",

@@ -3,6 +3,8 @@ import type { NavGroup } from '../utils/navigation';
 import { withBase } from '../utils/base';
 import SidebarGroup from './SidebarGroup.astro';
 
+const ROOT_GROUP_SLUG = '__root';
+
 interface Props {
   group: NavGroup;
   currentSlug: string;
@@ -10,15 +12,11 @@ interface Props {
 }
 
 const { group, currentSlug, base } = Astro.props;
+const isRootGroup = group.slug === ROOT_GROUP_SLUG;
 ---
 
-<details class="sidebar-group" open>
-  <summary class="sidebar-group-title">
-    <span class="sidebar-group-title-text">{group.name}</span>
-    <i class="sidebar-group-icon sidebar-group-icon-right hgi-stroke hgi-arrow-right-01" aria-hidden="true" />
-    <i class="sidebar-group-icon sidebar-group-icon-down hgi-stroke hgi-arrow-down-01" aria-hidden="true" />
-  </summary>
-  <div class="sidebar-group-content">
+{isRootGroup ? (
+  <div class="sidebar-group sidebar-group-root">
     {group.children?.length ? (
       <div class="sidebar-subgroups">
         {group.children.map((child) => (
@@ -48,4 +46,42 @@ const { group, currentSlug, base } = Astro.props;
       </ul>
     ) : null}
   </div>
-</details>
+) : (
+  <details class="sidebar-group" open>
+    <summary class="sidebar-group-title">
+      <span class="sidebar-group-title-text">{group.name}</span>
+      <i class="sidebar-group-icon sidebar-group-icon-right hgi-stroke hgi-arrow-right-01" aria-hidden="true" />
+      <i class="sidebar-group-icon sidebar-group-icon-down hgi-stroke hgi-arrow-down-01" aria-hidden="true" />
+    </summary>
+    <div class="sidebar-group-content">
+      {group.children?.length ? (
+        <div class="sidebar-subgroups">
+          {group.children.map((child) => (
+            <SidebarGroup group={child} currentSlug={currentSlug} base={base} />
+          ))}
+        </div>
+      ) : null}
+      {group.pages.length ? (
+        <ul class="sidebar-list">
+          {group.pages.map((page) => {
+            const isActive = page.slug === currentSlug;
+            return (
+              <li>
+                <a
+                  href={withBase(page.href, base)}
+                  class:list={['sidebar-link', { active: isActive }]}
+                >
+                  <i class={`sidebar-icon hgi-stroke hgi-${page.icon}`} aria-hidden="true" />
+                  <div class="sidebar-link-body">
+                    <span class="sidebar-link-name">{page.name}</span>
+                    {page.status && <span class={`status-badge status-badge-sm status-${page.status}`}>{page.status}</span>}
+                  </div>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      ) : null}
+    </div>
+  </details>
+)}

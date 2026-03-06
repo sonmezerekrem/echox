@@ -132,9 +132,11 @@ export function getBreadcrumbTrail(navTree: NavTree, currentSlug: string): NavGr
 export function buildNavTree(entries: CollectionEntry<'docs'>[]): NavTree {
   const tabsMap = new Map<string, NavTab>();
 
+  const ROOT_GROUP_SLUG = '__root';
+
   for (const entry of entries) {
     const parts = entry.id.split('/');
-    if (parts.length < 3) continue;
+    if (parts.length < 2) continue;
 
     const tabSlug = parts[0];
     const folderSegments = parts.slice(1, -1);
@@ -152,7 +154,23 @@ export function buildNavTree(entries: CollectionEntry<'docs'>[]): NavTree {
       });
     }
     const tab = tabsMap.get(tabSlug)!;
-    const leafGroup = getOrCreateGroupChain(tab, tabSlug, folderSegments);
+
+    let leafGroup: NavGroup;
+    if (folderSegments.length === 0) {
+      let rootGroup = tab.groups.find((g) => g.slug === ROOT_GROUP_SLUG);
+      if (!rootGroup) {
+        rootGroup = {
+          slug: ROOT_GROUP_SLUG,
+          name: '',
+          pages: [],
+          order: 0,
+        };
+        tab.groups.push(rootGroup);
+      }
+      leafGroup = rootGroup;
+    } else {
+      leafGroup = getOrCreateGroupChain(tab, tabSlug, folderSegments);
+    }
 
     const data = entry.data as { name?: string; order?: number; icon?: string; status?: string };
     const pageName = data.name || humanize(pageSlug);
