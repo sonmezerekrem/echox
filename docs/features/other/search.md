@@ -4,7 +4,6 @@ order: 2
 icon: search-lg
 ---
 
-# Search
 
 Echox uses [Pagefind](https://pagefind.app/) for full-text search. It runs automatically after each build.
 

@@ -4,7 +4,6 @@ order: 1
 icon: information-circle
 ---
 
-# Callouts
 
 Callouts highlight important information using blockquote syntax. They support four types: Note, Tip, Warning, and Danger.
 

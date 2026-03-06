@@ -4,8 +4,6 @@ order: 3
 icon: layout-01
 ---
 
-# Cards
-
 Cards display content in a grid layout. Use `:::card` for individual cards and `:::card-group` to group them.
 
 ## Syntax

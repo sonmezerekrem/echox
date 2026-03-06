@@ -4,7 +4,6 @@ order: 3
 icon: menu-03
 ---
 
-# Navigation
 
 Echox builds navigation from your folder structure and `_meta.json` files.
 

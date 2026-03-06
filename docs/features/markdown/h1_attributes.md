@@ -4,7 +4,6 @@ order: 5
 icon: type-01
 ---
 
-# H1 Attributes
 
 When a page has no frontmatter `name` or `title`, Echox uses the first H1 as the page title. You can add attributes like `{label="Implemented"}` that are parsed and shown as status badges.
 

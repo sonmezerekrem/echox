@@ -4,8 +4,6 @@ order: 3
 icon: plug-02
 ---
 
-## Custom Plugins
-
 Echox supports custom remark and rehype plugins. Place them in a `plugins/` directory in your docs root.
 
 ## Plugin Naming

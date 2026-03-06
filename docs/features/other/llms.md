@@ -4,7 +4,6 @@ order: 5
 icon: robot-02
 ---
 
-# LLM-Friendly Output
 
 Echox generates `llms.txt` and `llms-full.txt` for AI assistants and crawlers.
 

@@ -4,7 +4,6 @@ order: 1
 icon: left-to-right-list-bullet
 ---
 
-# Task Management
 
 Echox includes built-in task management for tracking work items (features, bugs, chores) directly in your documentation.
 

@@ -4,8 +4,6 @@ order: 2
 icon: arrow-down-01
 ---
 
-# Accordions
-
 Accordions let you show collapsible content sections. They use the `:::accordion` directive with a `title` attribute.
 
 ## Syntax
