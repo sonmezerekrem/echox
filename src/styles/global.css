@@ -375,20 +375,30 @@ body {
   display: none;
 }
 
-.sidebar-group summary.sidebar-group-title::before {
-  content: '';
-  width: 0;
-  height: 0;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 5px solid currentColor;
-  margin-top: 2px;
-  transition: transform 0.2s;
-  opacity: 0.6;
+.sidebar-group summary.sidebar-group-title {
+  justify-content: space-between;
 }
 
-.sidebar-group:not([open]) summary.sidebar-group-title::before {
-  transform: rotate(-90deg);
+.sidebar-group-title-text {
+  flex: 1;
+}
+
+.sidebar-group-icon {
+  font-size: 13px;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.sidebar-group-icon-down {
+  display: none;
+}
+
+.sidebar-group[open] .sidebar-group-icon-right {
+  display: none;
+}
+
+.sidebar-group[open] .sidebar-group-icon-down {
+  display: inline-flex;
 }
 
 .sidebar-group summary.sidebar-group-title:hover {

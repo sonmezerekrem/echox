@@ -15,7 +15,11 @@ const isOpen = groupContainsSlug(group, currentSlug);
 ---
 
 <details class="sidebar-group" open={isOpen}>
-  <summary class="sidebar-group-title">{group.name}</summary>
+  <summary class="sidebar-group-title">
+    <span class="sidebar-group-title-text">{group.name}</span>
+    <i class="sidebar-group-icon sidebar-group-icon-right hgi-stroke hgi-arrow-right-01" aria-hidden="true" />
+    <i class="sidebar-group-icon sidebar-group-icon-down hgi-stroke hgi-arrow-down-01" aria-hidden="true" />
+  </summary>
   <div class="sidebar-group-content">
     {group.children?.length ? (
       <div class="sidebar-subgroups">
