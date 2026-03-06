@@ -1,7 +1,7 @@
 ---
 name: Code Blocks
 order: 8
-icon: code-02
+icon: code
 ---
 
 Echox uses [Shiki](https://shiki.style/) for syntax highlighting. Code blocks support line highlighting, diff notation, a copy button, and automatic light/dark theme matching.

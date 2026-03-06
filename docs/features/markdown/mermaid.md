@@ -1,7 +1,7 @@
 ---
 name: Mermaid Diagrams
 order: 7
-icon: diagram-01
+icon: chart-relationship
 ---
 
 Echox renders [Mermaid](https://mermaid.js.org/) diagrams from fenced code blocks. Use the `mermaid` language identifier and write your diagram definition inside.

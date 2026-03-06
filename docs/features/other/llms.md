@@ -1,7 +1,7 @@
 ---
 name: LLM-Friendly Output
 order: 5
-icon: robot-02
+icon: machine-robot
 ---
 
 

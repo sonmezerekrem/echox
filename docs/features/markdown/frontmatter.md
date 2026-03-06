@@ -1,7 +1,7 @@
 ---
 name: Frontmatter & Parsing
 order: 6
-icon: file-code-02
+icon: document-code
 ---
 
 Echox uses YAML frontmatter at the top of each markdown file to control page metadata. Content is validated with a Zod schema and parsed at build time.

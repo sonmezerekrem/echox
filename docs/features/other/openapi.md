@@ -1,7 +1,7 @@
 ---
 name: OpenAPI Integration
 order: 4
-icon: code-02
+icon: code
 ---
 
 Echox can merge OpenAPI specs into your navigation as API tabs.

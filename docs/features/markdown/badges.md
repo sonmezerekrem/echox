@@ -1,7 +1,7 @@
 ---
 name: Status Badges
 order: 4
-icon: badge-01
+icon: checkmark-badge-01
 ---
 
 Status badges show the state of a page (draft, beta, deprecated, new). They appear next to the page title and in the sidebar.

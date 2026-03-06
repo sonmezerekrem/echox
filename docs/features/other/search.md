@@ -1,7 +1,7 @@
 ---
 name: Search
 order: 2
-icon: search-lg
+icon: search-01
 ---
 
 

@@ -1,7 +1,7 @@
 ---
 name: H1 Attributes
 order: 5
-icon: type-01
+icon: type-cursor
 ---
 
 

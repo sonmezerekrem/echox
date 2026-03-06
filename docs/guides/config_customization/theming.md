@@ -1,7 +1,7 @@
 ---
 name: Theming
 order: 2
-icon: palette
+icon: colors
 ---
 
 ## Light & Dark Mode
