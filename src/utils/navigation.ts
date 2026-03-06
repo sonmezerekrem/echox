@@ -47,7 +47,7 @@ function humanize(slug: string): string {
 }
 
 function loadMeta(...segments: string[]): FolderMeta {
-  const metaPath = path.join(userDir, 'content', ...segments, '_meta.json');
+  const metaPath = path.join(userDir, ...segments, '_meta.json');
   try {
     const raw = fs.readFileSync(metaPath, 'utf-8');
     return JSON.parse(raw) as FolderMeta;

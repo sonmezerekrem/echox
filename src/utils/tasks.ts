@@ -3,7 +3,7 @@ import path from 'node:path';
 import { parse as parseYaml } from 'yaml';
 
 const userDir = process.env.ECHOX_DIR || process.cwd();
-const contentDir = path.join(userDir, 'content');
+const contentDir = userDir;
 
 export interface TaskRelation {
   label?: string;

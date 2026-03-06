@@ -9,12 +9,12 @@ import { loadOpenApiSpecs, type ApiEndpoint } from '../utils/openapi';
 const userDir = process.env.ECHOX_DIR || process.cwd();
 
 function readMarkdownSource(entryId: string): string {
-  const filePath = path.join(userDir, 'content', entryId + '.md');
+  const filePath = path.join(userDir, entryId + '.md');
   try {
     const raw = fs.readFileSync(filePath, 'utf-8');
     return raw.replace(/^---[\s\S]*?---\n*/, '');
   } catch {
-    const altPath = path.join(userDir, 'content', entryId, 'index.md');
+    const altPath = path.join(userDir, entryId, 'index.md');
     try {
       const raw = fs.readFileSync(altPath, 'utf-8');
       return raw.replace(/^---[\s\S]*?---\n*/, '');
