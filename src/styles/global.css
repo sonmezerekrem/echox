@@ -19,8 +19,8 @@
   --nav-height: 72px;
   --subnav-height: 50px;
   --header-height: calc(var(--nav-height) + var(--subnav-height) + 3px);
-  --sidebar-width: 250px;
-  --toc-width: 180px;
+  --sidebar-width: 300px;
+  --toc-width: 160px;
   --container-max-width: 1340px;
   --page-gutter: 24px;
 
