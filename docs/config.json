@@ -7,7 +7,8 @@
   "theme": "default",
   "github": "https://github.com/sonmezerekrem/echox",
   "links": [
-    { "label": "Get Started", "url": "/guides/getting_started/introduction", "type": "button" }
+    { "label": "Get Started", "url": "/guides/getting_started/introduction", "type": "button" },
+    { "label": "npm", "url": "https://www.npmjs.com/package/@sonmezerekrem/echox", "external": true }
   ],
   "footer": {
     "message": "Built with Echox",
@@ -22,7 +23,8 @@
       {
         "title": "Community",
         "links": [
-          { "label": "GitHub", "url": "https://github.com/sonmezerekrem/echox", "external": true }
+          { "label": "GitHub", "url": "https://github.com/sonmezerekrem/echox", "external": true },
+          { "label": "npm", "url": "https://www.npmjs.com/package/@sonmezerekrem/echox", "external": true }
         ]
       }
     ]
