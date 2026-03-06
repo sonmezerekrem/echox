@@ -1,7 +1,7 @@
 ---
 import type { MarkdownHeading } from 'astro';
 import type { NavTree } from '../utils/navigation';
-import { getPrevNext } from '../utils/navigation';
+import { getPrevNext, getBreadcrumbTrail } from '../utils/navigation';
 import { loadConfig } from '../utils/config';
 import { getColorVars } from '../utils/colors';
 import { withBase } from '../utils/base';
@@ -31,10 +31,8 @@ const base = import.meta.env.BASE_URL || '/';
 const currentTab = navTree.tabs.find((t) => t.slug === activeTab);
 const groups = currentTab?.groups ?? [];
 
-const currentGroup = groups.find((g) =>
-  g.pages.some((p) => p.slug === currentSlug)
-);
-const groupName = currentGroup?.name ?? '';
+const breadcrumbGroups = getBreadcrumbTrail(navTree, currentSlug);
+const breadcrumbTrail = [...breadcrumbGroups.map((g) => g.name), title];
 const colorCss = getColorVars(config.color);
 const { prev, next } = getPrevNext(navTree, currentSlug);
 ---
@@ -92,7 +90,7 @@ const { prev, next } = getPrevNext(navTree, currentSlug);
 
           <main class="content">
             <article class="article" data-pagefind-body>
-              <Breadcrumb groupName={groupName} pageName={title} />
+              <Breadcrumb trail={breadcrumbTrail} />
               <h1 class="page-title">
                 {title}
                 {status && <span class={`status-badge status-${status}`}>{status}</span>}

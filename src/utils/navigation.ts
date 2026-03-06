@@ -20,6 +20,7 @@ export interface NavGroup {
   name: string;
   pages: NavPage[];
   order: number;
+  children?: NavGroup[];
 }
 
 export interface NavTab {
@@ -55,6 +56,79 @@ function loadMeta(...segments: string[]): FolderMeta {
   }
 }
 
+function getOrCreateGroupChain(
+  tab: NavTab,
+  tabSlug: string,
+  folderSegments: string[]
+): NavGroup {
+  if (folderSegments.length === 0) {
+    throw new Error('getOrCreateGroupChain requires at least one folder segment');
+  }
+  let list: NavGroup[] = tab.groups;
+  let parentPath: string[] = [];
+  let leaf: NavGroup | null = null;
+
+  for (const segment of folderSegments) {
+    parentPath.push(segment);
+    const meta = loadMeta(tabSlug, ...parentPath);
+    let group = list.find((g) => g.slug === segment);
+    if (!group) {
+      group = {
+        slug: segment,
+        name: meta.name || humanize(segment),
+        pages: [],
+        order: meta.order ?? 0,
+        children: [],
+      };
+      list.push(group);
+    }
+    if (!group.children) group.children = [];
+    list = group.children;
+    leaf = group;
+  }
+  return leaf!;
+}
+
+function sortGroupRecursive(group: NavGroup): void {
+  if (group.children?.length) {
+    group.children.sort((a, b) => a.order - b.order || a.name.localeCompare(b.name));
+    for (const child of group.children) sortGroupRecursive(child);
+  }
+  group.pages.sort((a, b) => a.order - b.order || a.name.localeCompare(b.name));
+}
+
+export function flattenPages(group: NavGroup): NavPage[] {
+  const out: NavPage[] = [];
+  if (group.children?.length) {
+    for (const child of group.children) {
+      out.push(...flattenPages(child));
+    }
+  }
+  out.push(...group.pages);
+  return out;
+}
+
+export function getBreadcrumbTrail(navTree: NavTree, currentSlug: string): NavGroup[] {
+  const trail: NavGroup[] = [];
+  function find(tab: NavTab, groups: NavGroup[], path: NavGroup[]): boolean {
+    for (const group of groups) {
+      const inPages = group.pages.some((p) => p.slug === currentSlug);
+      if (inPages) {
+        trail.push(...path, group);
+        return true;
+      }
+      if (group.children?.length && find(tab, group.children, [...path, group])) {
+        return true;
+      }
+    }
+    return false;
+  }
+  for (const tab of navTree.tabs) {
+    if (find(tab, tab.groups, [])) break;
+  }
+  return trail;
+}
+
 export function buildNavTree(entries: CollectionEntry<'docs'>[]): NavTree {
   const tabsMap = new Map<string, NavTab>();
 
@@ -62,8 +136,10 @@ export function buildNavTree(entries: CollectionEntry<'docs'>[]): NavTree {
     const parts = entry.id.split('/');
     if (parts.length < 3) continue;
 
-    const [tabSlug, groupSlug, ...rest] = parts;
-    const pageSlug = rest.join('/').replace(/\.md$/, '');
+    const tabSlug = parts[0];
+    const folderSegments = parts.slice(1, -1);
+    const filePart = parts[parts.length - 1];
+    const pageSlug = filePart.replace(/\.md$/, '');
 
     if (!tabsMap.has(tabSlug)) {
       const meta = loadMeta(tabSlug);
@@ -76,25 +152,14 @@ export function buildNavTree(entries: CollectionEntry<'docs'>[]): NavTree {
       });
     }
     const tab = tabsMap.get(tabSlug)!;
-
-    let group = tab.groups.find((g) => g.slug === groupSlug);
-    if (!group) {
-      const meta = loadMeta(tabSlug, groupSlug);
-      group = {
-        slug: groupSlug,
-        name: meta.name || humanize(groupSlug),
-        pages: [],
-        order: meta.order ?? 0,
-      };
-      tab.groups.push(group);
-    }
+    const leafGroup = getOrCreateGroupChain(tab, tabSlug, folderSegments);
 
     const data = entry.data as { name?: string; order?: number; icon?: string; status?: string };
     const pageName = data.name || humanize(pageSlug);
     const pageOrder = data.order ?? Number.MAX_SAFE_INTEGER;
     const pageIcon = data.icon || 'file-01';
 
-    group.pages.push({
+    leafGroup.pages.push({
       slug: entry.id,
       name: pageName,
       href: `/${entry.id}`,
@@ -138,16 +203,31 @@ export function buildNavTree(entries: CollectionEntry<'docs'>[]): NavTree {
   }
 
   const tabs = Array.from(tabsMap.values());
-
   for (const tab of tabs) {
-    for (const group of tab.groups) {
-      group.pages.sort((a, b) => a.order - b.order || a.name.localeCompare(b.name));
-    }
     tab.groups.sort((a, b) => a.order - b.order || a.name.localeCompare(b.name));
+    for (const group of tab.groups) sortGroupRecursive(group);
   }
   tabs.sort((a, b) => a.order - b.order || a.name.localeCompare(b.name));
 
   return { tabs };
+}
+
+function findPageInGroups(
+  groups: NavGroup[],
+  pathOrHref: string,
+  normalized: string
+): NavPage | null {
+  for (const group of groups) {
+    const page = group.pages.find(
+      (p) => p.slug === normalized || p.href === pathOrHref || p.href === `/${normalized}`
+    );
+    if (page) return page;
+    if (group.children?.length) {
+      const found = findPageInGroups(group.children, pathOrHref, normalized);
+      if (found) return found;
+    }
+  }
+  return null;
 }
 
 /**
@@ -157,12 +237,8 @@ export function buildNavTree(entries: CollectionEntry<'docs'>[]): NavTree {
 export function getPageNameByPath(navTree: NavTree, pathOrHref: string): string | null {
   const normalized = pathOrHref.replace(/^\//, '');
   for (const tab of navTree.tabs) {
-    for (const group of tab.groups) {
-      const page = group.pages.find(
-        (p) => p.slug === normalized || p.href === pathOrHref || p.href === `/${normalized}`
-      );
-      if (page) return page.name;
-    }
+    const page = findPageInGroups(tab.groups, pathOrHref, normalized);
+    if (page) return page.name;
   }
   return null;
 }
@@ -170,19 +246,25 @@ export function getPageNameByPath(navTree: NavTree, pathOrHref: string): string 
 export function getFirstPage(navTree: NavTree): string | null {
   const firstTab = navTree.tabs[0];
   if (!firstTab) return null;
-  const firstGroup = firstTab.groups[0];
-  if (!firstGroup) return null;
-  const firstPage = firstGroup.pages[0];
+  const flat: NavPage[] = [];
+  for (const group of firstTab.groups) flat.push(...flattenPages(group));
+  const firstPage = flat[0];
   if (!firstPage) return null;
   return firstPage.href;
+}
+
+function groupContainsSlug(group: NavGroup, slug: string): boolean {
+  if (group.pages.some((p) => p.slug === slug)) return true;
+  if (group.children?.length) {
+    return group.children.some((c) => groupContainsSlug(c, slug));
+  }
+  return false;
 }
 
 export function findCurrentTab(navTree: NavTree, slug: string): NavTab | null {
   for (const tab of navTree.tabs) {
     for (const group of tab.groups) {
-      if (group.pages.some((p) => p.slug === slug)) {
-        return tab;
-      }
+      if (groupContainsSlug(group, slug)) return tab;
     }
   }
   return null;
@@ -198,11 +280,7 @@ export function getPrevNext(navTree: NavTree, currentSlug: string): PrevNext {
   if (!tab) return { prev: null, next: null };
 
   const flat: NavPage[] = [];
-  for (const group of tab.groups) {
-    for (const page of group.pages) {
-      flat.push(page);
-    }
-  }
+  for (const group of tab.groups) flat.push(...flattenPages(group));
 
   const idx = flat.findIndex((p) => p.slug === currentSlug);
   return {

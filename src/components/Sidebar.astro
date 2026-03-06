@@ -1,6 +1,6 @@
 ---
 import type { NavGroup } from '../utils/navigation';
-import { withBase } from '../utils/base';
+import SidebarGroup from './SidebarGroup.astro';
 
 interface Props {
   groups: NavGroup[];
@@ -14,26 +14,7 @@ const { groups, currentSlug, base = '/' } = Astro.props;
 <aside class="sidebar">
   <nav class="sidebar-nav">
     {groups.map((group) => (
-      <div class="sidebar-group">
-        <div class="sidebar-group-title">{group.name}</div>
-        <ul class="sidebar-list">
-          {group.pages.map((page) => {
-            const isActive = page.slug === currentSlug;
-            return (
-              <li>
-                <a
-                  href={withBase(page.href, base)}
-                  class:list={['sidebar-link', { active: isActive }]}
-                >
-                  <i class={`sidebar-icon hgi-stroke hgi-${page.icon}`} aria-hidden="true" />
-                  <span>{page.name}</span>
-                  {page.status && <span class={`status-badge status-badge-sm status-${page.status}`}>{page.status}</span>}
-                </a>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
+      <SidebarGroup group={group} currentSlug={currentSlug} base={base} />
     ))}
   </nav>
 </aside>

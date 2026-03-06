@@ -1,14 +1,17 @@
 ---
 interface Props {
-  groupName: string;
-  pageName: string;
+  /** Breadcrumb segments: group names followed by page title (last item). */
+  trail: string[];
 }
 
-const { groupName, pageName } = Astro.props;
+const { trail } = Astro.props;
 ---
 
 <nav class="breadcrumb" aria-label="Breadcrumb">
-  <span class="breadcrumb-item">{groupName}</span>
-  <span class="breadcrumb-sep">/</span>
-  <span class="breadcrumb-item current">{pageName}</span>
+  {trail.map((item, i) => (
+    <>
+      {i > 0 && <span class="breadcrumb-sep">/</span>}
+      <span class:list={['breadcrumb-item', { current: i === trail.length - 1 }]}>{item}</span>
+    </>
+  ))}
 </nav>
