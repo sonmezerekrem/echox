@@ -42,6 +42,7 @@ function printUsage() {
 
   Init options:
     --name "My Docs"  Set the project name (skips prompt)
+    --no-git         Skip git init and initial commit
 
   Your project directory should contain:
     <tab>/       Markdown files organized as tab/group/page.md
@@ -396,7 +397,8 @@ dist/
   const gitDir = path.join(userDir, '.git');
   let gitInitialized = false;
   let gitCommitted = false;
-  if (!fs.existsSync(gitDir)) {
+  const skipGit = process.argv.includes('--no-git');
+  if (!skipGit && !fs.existsSync(gitDir)) {
     const initResult = spawnSync('git', ['init'], { cwd: userDir, stdio: 'pipe', encoding: 'utf-8' });
     if (initResult.status === 0) {
       gitInitialized = true;
