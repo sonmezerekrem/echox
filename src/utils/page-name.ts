@@ -18,6 +18,11 @@ export interface H1Result {
   attributes?: Record<string, string>;
 }
 
+/** Normalizes status/label for CSS class: "Implemented" → "implemented", "In Review" → "in-review" */
+export function toStatusSlug(val: string): string {
+  return val.toLowerCase().replace(/\s+/g, '-');
+}
+
 /**
  * Parses H1 text: strips {key="value"} blocks and extracts attributes.
  * e.g. "My Feature {label=\"Implemented\"}" → { name: "My Feature", attributes: { label: "Implemented" } }

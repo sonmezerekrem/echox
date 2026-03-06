@@ -4,11 +4,7 @@ import DocsLayout from '../layouts/DocsLayout.astro';
 import TaskList from '../components/TaskList.astro';
 import { buildFullNavTree, findCurrentTab } from '../utils/navigation';
 import { getTabsWithTasks, loadTasksForTab } from '../utils/tasks';
-import { getFirstH1AsNameAndAttrs } from '../utils/page-name';
-
-function toStatusSlug(val: string): string {
-  return val.toLowerCase().replace(/\s+/g, '-');
-}
+import { getFirstH1AsNameAndAttrs, toStatusSlug } from '../utils/page-name';
 
 export async function getStaticPaths() {
   const entries = await getCollection('docs');
