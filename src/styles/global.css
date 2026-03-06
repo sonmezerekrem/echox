@@ -539,6 +539,13 @@ body {
   flex-shrink: 0;
 }
 
+/* Fallback for custom status from H1 {label="..."} - overridden by specific rules below */
+.status-badge[class*='status-'] {
+  background: #f3f4f6;
+  color: #6b7280;
+  border: 1px solid #e5e7eb;
+}
+
 .status-new {
   background: #ecfdf5;
   color: #059669;
@@ -561,6 +568,33 @@ body {
   background: #f9fafb;
   color: #6b7280;
   border: 1px solid #e5e7eb;
+}
+
+/* Custom status from H1 {label="..."} - e.g. implemented, planned, experimental */
+.status-implemented {
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+}
+
+.status-planned,
+.status-experimental {
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
+}
+
+[data-theme='dark'] .status-implemented {
+  background: rgba(5, 150, 105, 0.15);
+  color: #6ee7b7;
+  border-color: rgba(5, 150, 105, 0.3);
+}
+
+[data-theme='dark'] .status-planned,
+[data-theme='dark'] .status-experimental {
+  background: rgba(37, 99, 235, 0.15);
+  color: #93c5fd;
+  border-color: rgba(37, 99, 235, 0.3);
 }
 
 [data-theme='dark'] .status-new {

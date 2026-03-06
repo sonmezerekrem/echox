@@ -4,10 +4,29 @@
  * from the rendered content so it doesn't appear twice (once as page
  * title, once in the body).
  *
- * Only removes when frontmatter has neither name nor title.
+ * Parses H1 attributes like {label="Implemented"} and stores in file.data
+ * for downstream use. Only removes when frontmatter has neither name nor title.
  */
 import { visit } from 'unist-util-visit';
 import { parse as parseYaml } from 'yaml';
+
+const ATTR_BLOCK_RE = /\s*\{([^}]*)\}\s*$/;
+const ATTR_PAIR_RE = /(\w+)\s*=\s*"([^"]*)"/g;
+
+function parseH1WithAttributes(rawText) {
+  const trimmed = rawText.trim();
+  const blockMatch = trimmed.match(ATTR_BLOCK_RE);
+  const attributes = {};
+  if (blockMatch) {
+    const blockContent = blockMatch[1];
+    let pairMatch;
+    while ((pairMatch = ATTR_PAIR_RE.exec(blockContent)) !== null) {
+      attributes[pairMatch[1]] = pairMatch[2];
+    }
+    return { name: trimmed.replace(ATTR_BLOCK_RE, '').trim() || trimmed, attributes: Object.keys(attributes).length ? attributes : undefined };
+  }
+  return { name: trimmed };
+}
 
 function getTextFromNode(node) {
   if (!node) return '';
@@ -38,11 +57,17 @@ export default function remarkStripH1WhenUsedAsTitle() {
 
     let indexToRemove = -1;
     let parentToRemoveFrom = null;
+    let h1Attrs = null;
     visit(tree, 'heading', (node, index, parent) => {
       if (indexToRemove >= 0) return;
       if (node.depth !== 1) return;
       const text = getTextFromNode(node).trim();
       if (!text) return;
+      const parsed = parseH1WithAttributes(text);
+      if (parsed.attributes) {
+        file.data = file.data || {};
+        file.data.echoxH1Attributes = parsed.attributes;
+      }
       indexToRemove = index;
       parentToRemoveFrom = parent;
     });

@@ -4,18 +4,23 @@ import DocsLayout from '../layouts/DocsLayout.astro';
 import TaskList from '../components/TaskList.astro';
 import { buildFullNavTree, findCurrentTab } from '../utils/navigation';
 import { getTabsWithTasks, loadTasksForTab } from '../utils/tasks';
-import { getFirstH1AsName } from '../utils/page-name';
+import { getFirstH1AsNameAndAttrs } from '../utils/page-name';
+
+function toStatusSlug(val: string): string {
+  return val.toLowerCase().replace(/\s+/g, '-');
+}
 
 export async function getStaticPaths() {
   const entries = await getCollection('docs');
   const augmentedEntries = entries.map((entry) => {
-    const data = entry.data as { name?: string; title?: string };
+    const data = entry.data as { name?: string; title?: string; status?: string };
     if (data.name ?? data.title) return entry;
-    const nameFromH1 = getPageNameFromFile(entry.id);
-    if (nameFromH1) {
-      return { ...entry, data: { ...entry.data, name: nameFromH1 } };
-    }
-    return entry;
+    const h1 = getFirstH1AsNameAndAttrs(entry.id);
+    if (!h1) return entry;
+    const updates: Record<string, string> = { name: h1.name };
+    const statusFromAttrs = h1.attributes?.status ?? h1.attributes?.label;
+    if (statusFromAttrs) updates.status = toStatusSlug(statusFromAttrs);
+    return { ...entry, data: { ...entry.data, ...updates } };
   });
   const navTree = buildFullNavTree(augmentedEntries);
 
