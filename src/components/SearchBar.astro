@@ -1,4 +1,10 @@
 ---
+interface Props {
+  base?: string;
+}
+const { base = '/' } = Astro.props;
+const baseNorm = base.endsWith('/') ? base : base + '/';
+const pagefindPath = baseNorm + 'pagefind/pagefind.js';
 ---
 
 <button class="search-bar" type="button" aria-label="Search documentation" id="search-trigger">
@@ -38,7 +44,7 @@
   </div>
 </div>
 
-<script is:inline>
+<script is:inline define:vars={{ pagefindPath }}>
   (function () {
     var pagefind = null;
     var pagefindFailed = false;
@@ -53,8 +59,9 @@
 
     function loadPagefind() {
       if (pagefind || pagefindFailed) return;
-      import('/pagefind/pagefind.js').then(function (pf) {
+      import(pagefindPath).then(function (pf) {
         pagefind = pf;
+        if (pagefind.options) pagefind.options({ bundlePath: pagefindPath.replace(/pagefind\.js$/, '') });
         if (pagefind.init) pagefind.init();
       }).catch(function () {
         pagefindFailed = true;

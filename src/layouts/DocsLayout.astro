@@ -70,7 +70,7 @@ const { prev, next } = getPrevNext(navTree, currentSlug);
               {config.logo && <img src={withBase(config.logo, base)} alt={config.name} class="site-logo" />}
               {config.name}
             </a>
-            <SearchBar />
+            <SearchBar base={base} />
             <HeaderActions links={config.links} github={config.github} base={base} />
             <button class="mobile-menu-toggle" aria-label="Toggle menu">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
