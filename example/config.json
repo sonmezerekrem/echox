@@ -4,6 +4,7 @@
   "logo": "/logo.svg",
   "favicon": "/favicon.svg",
   "color": "lime",
+  "theme": "default",
   "github": "https://github.com/sonmezerekrem/echox",
   "links": [
     { "label": "Get Started", "url": "/guides/getting_started/introduction", "type": "button" }

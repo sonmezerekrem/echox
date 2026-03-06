@@ -31,6 +31,7 @@ export interface SiteConfig {
   logo?: string;
   favicon?: string;
   color?: string;
+  theme?: string;
   github?: string;
   links?: HeaderLink[];
   footer?: FooterConfig;
@@ -62,6 +63,10 @@ function validateConfig(config: unknown): SiteConfig {
       const valid = Object.keys(PALETTES).join(', ');
       errors.push(`"color" must be one of: ${valid} (got "${obj.color}")`);
     }
+  }
+
+  if (obj.theme !== undefined && typeof obj.theme !== 'string') {
+    errors.push('"theme" must be a string');
   }
 
   if (obj.logo !== undefined && typeof obj.logo !== 'string') {
@@ -153,7 +158,9 @@ function validateConfig(config: unknown): SiteConfig {
     throw new Error(msg);
   }
 
-  return obj as unknown as SiteConfig;
+  const siteConfig = obj as unknown as SiteConfig;
+  siteConfig.theme = siteConfig.theme ?? 'default';
+  return siteConfig;
 }
 
 export function loadConfig(): SiteConfig {

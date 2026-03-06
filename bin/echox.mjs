@@ -95,6 +95,10 @@ function validateConfig(configPath) {
     }
   }
 
+  if (config.theme !== undefined && typeof config.theme !== 'string') {
+    errors.push('"theme" must be a string');
+  }
+
   if (config.logo !== undefined && typeof config.logo !== 'string') {
     errors.push('"logo" must be a string');
   }
