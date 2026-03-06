@@ -33,3 +33,11 @@ The sidebar shows the current tab's groups and pages. Nested groups are supporte
 ## Breadcrumbs
 
 Breadcrumbs show the path from tab → group(s) → current page. They appear above the page title.
+
+## Table of Contents
+
+Each page gets an auto-generated table of contents from H2 and H3 headings. It appears in the right sidebar (or below the content on narrow screens). Click a heading to jump to that section. The current section is highlighted as you scroll.
+
+## Prev/Next
+
+At the bottom of each page, links to the previous and next pages (within the same tab) appear. They help users move through the docs in reading order.
