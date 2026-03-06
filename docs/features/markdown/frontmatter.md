@@ -43,29 +43,7 @@ status: beta
 
 4. **Fallback to H1** — When neither `name` nor `title` is set, the first H1 is used as the page title. See [H1 Attributes](/features/markdown/h1_attributes) for `{label="..."}` and `{status="..."}` parsing.
 
-## Folder Metadata (_meta.json)
-
-Tabs and groups get their display names and order from `_meta.json` in each folder:
-
-```json
-{ "name": "Getting Started", "order": 1 }
-```
-
-- `name` — Display name (default: humanized folder slug)
-- `order` — Sort order among siblings
-
-Example structure:
-
-```
-guides/
-├── _meta.json              → Tab name "Guides"
-├── getting_started/
-│   ├── _meta.json          → Group name "Getting Started"
-│   └── introduction.md
-└── config_customization/
-    ├── _meta.json          → Group name "Config & Customization"
-    └── configuration.md
-```
+5. **Folder metadata** — Tab and group names/order come from `_meta.json` in each folder. See [Navigation](/features/other/navigation#_metajson).
 
 ## Content Collection
 
