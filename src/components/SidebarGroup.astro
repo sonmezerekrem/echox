@@ -37,8 +37,10 @@ const { group, currentSlug, base } = Astro.props;
                 class:list={['sidebar-link', { active: isActive }]}
               >
                 <i class={`sidebar-icon hgi-stroke hgi-${page.icon}`} aria-hidden="true" />
-                <span>{page.name}</span>
-                {page.status && <span class={`status-badge status-badge-sm status-${page.status}`}>{page.status}</span>}
+                <div class="sidebar-link-body">
+                  <span class="sidebar-link-name">{page.name}</span>
+                  {page.status && <span class={`status-badge status-badge-sm status-${page.status}`}>{page.status}</span>}
+                </div>
               </a>
             </li>
           );
