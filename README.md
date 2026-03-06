@@ -1,4 +1,5 @@
 <p align="center">
+  <a href="https://www.npmjs.com/package/@sonmezerekrem/echox"><img src="https://img.shields.io/npm/v/@sonmezerekrem/echox?style=flat-square" alt="npm" /></a>
   <img src="https://img.shields.io/badge/Echox-docs%20builder-7c3aed?style=for-the-badge" alt="Echox" />
 </p>
 
@@ -18,7 +19,7 @@
 
 | | |
 |---|---|
-| **Folder-based routing** | Your `content/` structure becomes the site. No routing config. |
+| **Folder-based routing** | Your `tab/group/page.md` structure becomes the site. No routing config. |
 | **Static by default** | HTML + CSS. No runtime JS unless you add it. |
 | **OpenAPI** | Drop `.json` specs into `apis/`; each file becomes a tab with generated endpoint docs. |
 | **Tasks** | Add `tasks.yml` per tab for Todo / In progress / Done views. |
@@ -36,7 +37,7 @@ npx echox init
 # or: echox init --name "My Docs"
 ```
 
-This creates `content/`, `assets/`, `config.json`, a sample OpenAPI spec in `apis/`, and a `tasks.yml` example.
+This creates `guides/`, `assets/`, `config.json`, a sample OpenAPI spec in `apis/`, and a `tasks.yml` example.
 
 **2. Run the dev server**
 
@@ -79,18 +80,17 @@ Your docs repo stays minimal:
 
 ```
 my-docs/
-├── content/              # Markdown only
-│   └── guides/
-│       └── getting_started/
-│           └── introduction.md
+├── guides/               # Tab folder (Markdown)
+│   └── getting_started/
+│       └── introduction.md
 ├── apis/                 # Optional OpenAPI 3.x JSON (one file = one tab)
 │   └── sample_api.json
 ├── assets/               # Images, favicon, logo (served at /)
 └── config.json          # Site name, theme color, logo, links, footer
 ```
 
-- **Tabs** = top-level folders under `content/` (e.g. `guides`, `api_reference`).
-- **Groups** = second-level folders (e.g. `getting_started`).
+- **Tabs** = top-level folders (e.g. `guides`, `features`).
+- **Groups** = subfolders (e.g. `getting_started`).
 - **Pages** = `.md` files. Use frontmatter for title, order, icon, status badge.
 
 Add `_meta.json` in any tab or group folder to set display name and sort order. Add `tasks.yml` in a tab folder to get Todo / In progress / Done pages for that tab.
@@ -112,7 +112,7 @@ Optional: `description`, `logo`, `favicon`, `github`, `links`, `footer`. Valid `
 
 | Command | Description |
 |--------|--------------|
-| `echox init` | Scaffold `content/`, `config.json`, `apis/`, `assets/`, and sample tasks |
+| `echox init` | Scaffold `guides/`, `config.json`, `apis/`, `assets/`, and sample tasks |
 | `echox dev` | Start dev server with hot reload |
 | `echox build` | Build static site to `dist/` (runs link check + Pagefind) |
 | `echox build --no-link-check` | Build without broken-link check |
@@ -121,13 +121,14 @@ Optional: `description`, `logo`, `favicon`, `github`, `links`, `footer`. Valid `
 
 ## Documentation
 
-- **[Full docs](https://github.com/sonmezerekrem/echox/tree/main/example)** — The `example/` folder in this repo is a full Echox site; use it as reference.
+- **[Full docs](https://github.com/sonmezerekrem/echox/tree/main/docs)** — The `docs/` folder in this repo is a complete Echox site; use it as reference.
+- **[npm package](https://www.npmjs.com/package/@sonmezerekrem/echox)** — Install from npm.
 - **[Agent skill](.cursor/skills/echox/SKILL.md)** — Copy-paste rules for AI tools to write Echox-compliant Markdown.
 - **[AGENTS.md](./AGENTS.md)** — For AI coding agents working on the Echox codebase.
 
 ## Contributing
 
-Contributions are welcome. Open an issue or a pull request. If you change behavior or add options, consider updating the `example/` content and the skill docs so they stay in sync.
+Contributions are welcome. Open an issue or a pull request. If you change behavior or add options, consider updating the `docs/` content and the skill docs so they stay in sync.
 
 ## License
 
