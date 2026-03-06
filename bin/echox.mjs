@@ -31,7 +31,7 @@ function printUsage() {
     echox -v | --version   Print version
 
   Commands:
-    init      Scaffold a new docs project in the current directory
+    init      Scaffold a new project in the current directory
     dev       Start development server with hot reload
     build     Build static site to ./dist
     preview   Preview the built site locally
@@ -44,7 +44,7 @@ function printUsage() {
     --name "My Docs"  Set the project name (skips prompt)
 
   Your project directory should contain:
-    content/     Markdown files organized in folders
+    <tab>/       Markdown files organized as tab/group/page.md
     assets/      Static assets (images, etc.)
     config.json  Site configuration
 
@@ -176,15 +176,7 @@ function validateConfig(configPath) {
 }
 
 function validate() {
-  const contentDir = path.join(userDir, 'content');
   const configFile = path.join(userDir, 'config.json');
-
-  if (!fs.existsSync(contentDir)) {
-    console.error(`Error: No content/ directory found in ${userDir}`);
-    console.error('Create a content/ directory with your markdown files.');
-    console.error('Run "echox init" to scaffold a new project.');
-    process.exit(1);
-  }
 
   if (!fs.existsSync(configFile)) {
     console.error(`Error: No config.json found in ${userDir}`);
@@ -209,11 +201,10 @@ function prompt(question) {
 }
 
 async function runInit() {
-  const contentDir = path.join(userDir, 'content');
   const configFile = path.join(userDir, 'config.json');
 
-  if (fs.existsSync(contentDir) || fs.existsSync(configFile)) {
-    console.error('Error: This directory already contains content/ or config.json');
+  if (fs.existsSync(configFile)) {
+    console.error('Error: This directory already contains config.json');
     console.error('The init command should be run in an empty directory.');
     process.exit(1);
   }
@@ -238,19 +229,19 @@ icon: home-04
 
 # Welcome to ${projectName}
 
-This is your documentation site. Start editing this file or add new markdown files to the \`content/\` directory.
+This is your documentation site. Start editing this file or add new markdown files.
 
 ## Getting Started
 
 Your documentation is organized in a three-level folder structure:
 
-- **Tabs** -- top-level folders in \`content/\` appear as tabs in the header
+- **Tabs** -- top-level folders appear as tabs in the header
 - **Groups** -- second-level folders become sidebar section headings
 - **Pages** -- markdown files are listed as links under their group
 
 ## What's Next
 
-- Add more pages by creating \`.md\` files in \`content/\`
+- Add more pages by creating \`.md\` files in tab/group folders
 - Put images in the \`assets/\` directory
 - Edit \`config.json\` to customize your site
 `;
@@ -266,30 +257,30 @@ Your documentation is organized in a three-level folder structure:
 tasks:
   - id: TASK-1
     name: Edit the introduction page
-    description: Customize content/docs/getting_started/introduction.md for your project.
+    description: Customize guides/getting_started/introduction.md for your project.
     type: docs
     labels:
       - onboarding
     status: todo
     steps:
-      - Open content/docs/getting_started/introduction.md
+      - Open guides/getting_started/introduction.md
       - Update the welcome text and next steps
     acceptance_criteria:
       - Introduction reflects your project name and goals
   - id: TASK-2
     name: Add your first real page
-    description: Create a new markdown file under content/docs/ to document a topic.
+    description: Create a new markdown file under guides/ to document a topic.
     type: docs
     labels:
       - content
     status: todo
     steps:
-      - Create a new folder under content/docs/ (e.g. content/docs/guides/)
+      - Create a new folder under guides/ (e.g. guides/reference/)
       - Add a .md file (e.g. my_topic.md) with frontmatter and content
     acceptance_criteria:
       - New page appears in the sidebar and builds without errors
     relations:
-      - docs/getting_started/introduction
+      - guides/getting_started/introduction
 `;
 
   const openApiSpec = {
@@ -343,14 +334,14 @@ tasks:
     },
   };
 
-  fs.mkdirSync(path.join(contentDir, 'docs', 'getting_started'), { recursive: true });
+  fs.mkdirSync(path.join(userDir, 'guides', 'getting_started'), { recursive: true });
   fs.mkdirSync(path.join(userDir, 'assets'), { recursive: true });
   fs.mkdirSync(path.join(userDir, 'apis'), { recursive: true });
   fs.writeFileSync(
-    path.join(contentDir, 'docs', 'getting_started', 'introduction.md'),
+    path.join(userDir, 'guides', 'getting_started', 'introduction.md'),
     starterMd,
   );
-  fs.writeFileSync(path.join(contentDir, 'docs', 'tasks.yml'), tasksYaml);
+  fs.writeFileSync(path.join(userDir, 'guides', 'tasks.yml'), tasksYaml);
   fs.writeFileSync(
     path.join(userDir, 'apis', 'sample_api.json'),
     JSON.stringify(openApiSpec, null, 2) + '\n',
@@ -404,26 +395,41 @@ dist/
 
   const gitDir = path.join(userDir, '.git');
   let gitInitialized = false;
+  let gitCommitted = false;
   if (!fs.existsSync(gitDir)) {
-    const result = spawnSync('git', ['init'], { cwd: userDir, stdio: 'pipe', encoding: 'utf-8' });
-    gitInitialized = result.status === 0;
+    const initResult = spawnSync('git', ['init'], { cwd: userDir, stdio: 'pipe', encoding: 'utf-8' });
+    if (initResult.status === 0) {
+      gitInitialized = true;
+      spawnSync('git', ['add', '.'], { cwd: userDir, stdio: 'pipe', encoding: 'utf-8' });
+      const commitResult = spawnSync(
+        'git', ['commit', '-m', 'Initial commit'],
+        { cwd: userDir, stdio: 'pipe', encoding: 'utf-8' },
+      );
+      gitCommitted = commitResult.status === 0;
+    }
   }
+
+  const gitNote = gitCommitted
+    ? '\n    (git init + initial commit)'
+    : gitInitialized
+      ? '\n    (git init)'
+      : '';
 
   console.log(`
   Project "${projectName}" created successfully!
 
   Created files:
     config.json
-    content/docs/getting_started/introduction.md
-    content/docs/tasks.yml
+    guides/getting_started/introduction.md
+    guides/tasks.yml
     apis/sample_api.json
     assets/
     .gitignore
     Dockerfile
-    .dockerignore${gitInitialized ? '\n    (git init)' : ''}
+    .dockerignore${gitNote}
 
   Next steps:
-    echox dev      Start the development server (Docs + Sample Api tabs; Tasks: Todo / In progress / Done)
+    echox dev      Start the development server (Guides + Sample Api tabs; Tasks: Todo / In progress / Done)
     echox build    Build for production
     docker build -t my-docs . && docker run -p 80:80 my-docs   Build and serve with Docker
 `);
