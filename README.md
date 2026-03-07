@@ -123,12 +123,10 @@ Optional: `description`, `logo`, `favicon`, `github`, `links`, `footer`. Valid `
 
 - **[Full docs](https://github.com/sonmezerekrem/echox/tree/main/docs)** — The `docs/` folder in this repo is a complete Echox site; use it as reference.
 - **[npm package](https://www.npmjs.com/package/@sonmezerekrem/echox)** — Install from npm.
-- **[Agent skill](.cursor/skills/echox/SKILL.md)** — Copy-paste rules for AI tools to write Echox-compliant Markdown.
-- **[AGENTS.md](./AGENTS.md)** — For AI coding agents working on the Echox codebase.
 
 ## Contributing
 
-Contributions are welcome. Open an issue or a pull request. If you change behavior or add options, consider updating the `docs/` content and the skill docs so they stay in sync.
+Contributions are welcome. Open an issue or a pull request. If you change behavior or add options, consider updating the `docs/` content so it stays in sync.
 
 ## License
 
