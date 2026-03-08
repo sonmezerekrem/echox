@@ -44,30 +44,40 @@ const apisDir = path.join(userDir, 'apis');
 const assetsDir = path.join(userDir, 'assets');
 const userDirResolved = path.resolve(userDir);
 
-function echoxConfigReload() {
+function echoxReloadIntegration() {
   return {
-    name: 'echox-config-reload',
-    configureServer(server) {
-      // Watch user config, content (root), apis, and assets so edits trigger reload (they live outside Astro root)
-      server.watcher.add(configPath);
-      server.watcher.add(userDir);
-      if (fs.existsSync(apisDir)) server.watcher.add(apisDir);
-      if (fs.existsSync(assetsDir)) server.watcher.add(assetsDir);
+    name: 'echox-reload',
+    hooks: {
+      'astro:server:setup': ({ server, refreshContent }) => {
+        // Watch user config, content (root), apis, and assets (they live outside Astro root)
+        server.watcher.add(configPath);
+        server.watcher.add(userDir);
+        if (fs.existsSync(apisDir)) server.watcher.add(apisDir);
+        if (fs.existsSync(assetsDir)) server.watcher.add(assetsDir);
 
-      const triggerReload = (changedPath) => {
-        const resolved = path.resolve(changedPath);
-        if (resolved === path.resolve(configPath)) return true;
-        if (resolved.startsWith(userDirResolved)) return true;
-        if (fs.existsSync(apisDir) && resolved.startsWith(path.resolve(apisDir))) return true;
-        if (fs.existsSync(assetsDir) && resolved.startsWith(path.resolve(assetsDir))) return true;
-        return false;
-      };
+        const shouldReload = (changedPath) => {
+          const resolved = path.resolve(changedPath);
+          if (resolved === path.resolve(configPath)) return true;
+          if (resolved.startsWith(userDirResolved)) return true;
+          if (fs.existsSync(apisDir) && resolved.startsWith(path.resolve(apisDir))) return true;
+          if (fs.existsSync(assetsDir) && resolved.startsWith(path.resolve(assetsDir))) return true;
+          return false;
+        };
 
-      for (const event of ['change', 'add', 'unlink']) {
-        server.watcher.on(event, (p) => {
-          if (triggerReload(p)) server.ws.send({ type: 'full-reload' });
-        });
-      }
+        const handleChange = async (p) => {
+          if (!shouldReload(p)) return;
+          try {
+            if (refreshContent) await refreshContent();
+          } catch (e) {
+            // refreshContent may not exist or use different API in some Astro versions
+          }
+          server.ws.send({ type: 'full-reload' });
+        };
+
+        for (const event of ['change', 'add', 'unlink']) {
+          server.watcher.on(event, handleChange);
+        }
+      },
     },
   };
 }
@@ -105,8 +115,8 @@ export default defineConfig({
     remarkPlugins: [remarkDirective, remarkComponents, remarkStripH1WhenUsedAsTitle, ...remarkPlugins],
     rehypePlugins,
   },
+  integrations: [echoxReloadIntegration()],
   vite: {
-    plugins: [echoxConfigReload()],
     resolve: {
       alias: {
         '@config': configPath,
