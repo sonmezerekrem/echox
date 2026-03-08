@@ -48,12 +48,12 @@ function echoxReloadIntegration() {
   return {
     name: 'echox-reload',
     hooks: {
-      'astro:server:setup': ({ server, refreshContent }) => {
+      'astro:server:setup': ({ server, refreshContent, logger }) => {
         // Watch user config, content (root), apis, and assets (they live outside Astro root)
-        server.watcher.add(configPath);
-        server.watcher.add(userDir);
-        if (fs.existsSync(apisDir)) server.watcher.add(apisDir);
-        if (fs.existsSync(assetsDir)) server.watcher.add(assetsDir);
+        const watchPaths = [configPath, userDir];
+        if (fs.existsSync(apisDir)) watchPaths.push(apisDir);
+        if (fs.existsSync(assetsDir)) watchPaths.push(assetsDir);
+        for (const p of watchPaths) server.watcher.add(p);
 
         const shouldReload = (changedPath) => {
           const resolved = path.resolve(changedPath);
@@ -66,11 +66,11 @@ function echoxReloadIntegration() {
 
         const handleChange = async (p) => {
           if (!shouldReload(p)) return;
+          logger.info(`[echox] Reloading: ${path.relative(userDirResolved, p) || p}`);
           try {
             if (refreshContent) await refreshContent();
-          } catch (e) {
-            // refreshContent may not exist or use different API in some Astro versions
-          }
+          } catch (_) {}
+          if (server.moduleGraph) server.moduleGraph.invalidateAll();
           server.ws.send({ type: 'full-reload' });
         };
 
