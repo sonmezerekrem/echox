@@ -1537,6 +1537,11 @@ body {
   transition: top 0.15s ease, height 0.15s ease, opacity 0.15s ease;
 }
 
+.toc-depth-1 > .toc-link {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
 .toc-depth-2 > .toc-link {
   font-weight: 600;
   color: var(--text-primary);

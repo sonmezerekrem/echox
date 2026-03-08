@@ -1,12 +1,16 @@
 ---
 import type { MarkdownHeading } from 'astro';
 
+const DEFAULT_TOC_DEPTHS = [2, 3];
+
 interface Props {
   headings: MarkdownHeading[];
+  tocLevels?: number[];
 }
 
-const { headings } = Astro.props;
-const filteredHeadings = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
+const { headings, tocLevels } = Astro.props;
+const allowedDepths = tocLevels ?? DEFAULT_TOC_DEPTHS;
+const filteredHeadings = headings.filter((h) => allowedDepths.includes(h.depth));
 ---
 
 {filteredHeadings.length > 0 && (

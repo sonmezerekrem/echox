@@ -17,6 +17,7 @@ const docs = defineCollection({
       order: z.number().optional(),
       icon: z.string().optional(),
       status: z.enum(['draft', 'beta', 'deprecated', 'new']).optional(),
+      toc: z.array(z.number().min(1).max(6)).optional(),
     })
     .transform((data) => ({
       ...data,

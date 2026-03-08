@@ -17,6 +17,7 @@ Each `.md` file can include these optional fields between `---` delimiters:
 | `order` | number | Sort order within the group (lower = first) |
 | `icon` | string | HugeIcons icon name (e.g. `file-01`, `home-04`) for sidebar |
 | `status` | enum | `draft`, `beta`, `deprecated`, `new` — shown as badge |
+| `toc` | number[] | Heading depths to show in TOC (1–6 = h1–h6). Default: `[2, 3]` (h2, h3 only) |
 
 ### Example
 
@@ -26,6 +27,7 @@ name: Getting Started
 order: 1
 icon: home-04
 status: beta
+toc: [1, 2, 3]   # TOC: h1, h2, h3 (omit for default: h2, h3 only)
 ---
 ```
 
@@ -38,6 +40,7 @@ status: beta
    - `order` is optional number
    - `icon` is optional string
    - `status` must be one of: `draft`, `beta`, `deprecated`, `new`
+   - `toc` is optional array of depths 1–6; default TOC shows h2 and h3 only
 
 3. **Transform** — `name` is set from `title` when missing: `name: data.name ?? data.title`
 

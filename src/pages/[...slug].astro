@@ -124,6 +124,7 @@ if (tasksPage && Array.isArray(tasks)) {
     currentSlug={entry.id}
     headings={docHeadings}
     status={docStatus}
+    toc={(entry.data as { toc?: number[] }).toc}
   >
     <DocContent />
   </DocsLayout>
