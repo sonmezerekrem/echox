@@ -1,5 +1,4 @@
 import { visit } from 'unist-util-visit';
-import { h } from 'hastscript';
 
 const CALLOUT_TYPES = {
   NOTE: { icon: 'information-circle', label: 'Note' },

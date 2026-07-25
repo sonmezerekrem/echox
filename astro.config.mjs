@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import { unified } from '@astrojs/markdown-remark';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import fs from 'node:fs';
@@ -90,6 +91,10 @@ export default defineConfig({
   outDir: path.join(userDir, 'dist'),
   publicDir: path.join(userDir, 'assets'),
   markdown: {
+    processor: unified({
+      remarkPlugins: [remarkDirective, remarkComponents, remarkStripH1WhenUsedAsTitle, ...remarkPlugins],
+      rehypePlugins,
+    }),
     shikiConfig: {
       themes: {
         light: 'github-light',
@@ -112,8 +117,6 @@ export default defineConfig({
         },
       ],
     },
-    remarkPlugins: [remarkDirective, remarkComponents, remarkStripH1WhenUsedAsTitle, ...remarkPlugins],
-    rehypePlugins,
   },
   integrations: [echoxReloadIntegration()],
   vite: {
