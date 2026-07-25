@@ -55,6 +55,8 @@ Output goes to `dist/`. Use `echox preview` to serve it locally.
 
 ## Install
 
+Requires **Node.js 22.12+**.
+
 **From npm (npmjs.com)**
 
 ```bash

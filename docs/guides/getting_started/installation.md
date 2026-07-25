@@ -6,6 +6,8 @@ icon: download-01
 
 ## Install Echox
 
+Requires **Node.js 22.12+** (Astro 7 requirement).
+
 Install Echox globally or as a dev dependency:
 
 ```bash
